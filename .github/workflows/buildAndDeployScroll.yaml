@@ -15,7 +15,7 @@ jobs:
           npm install -g scroll-cli
           scroll build
           # Uncomment the line below if you are ignoring *.html files in your gitignore file
-          # rm .gitignore
+          rm .gitignore
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
