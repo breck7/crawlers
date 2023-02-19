@@ -71,7 +71,7 @@ class DBLPFile {
   }
 }
 
-class DBLPImporter {
+class DBLPImporter extends TreeBaseCrawler {
   writeToDatabaseCommand() {
     this.matches.forEach(file => {
       try {
