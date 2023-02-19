@@ -1,3 +1,4 @@
+import header.scroll
 title TreeCrawler
 
 * This project contains scripts for importing data from the web into TreeBases.
@@ -9,7 +10,5 @@ title TreeCrawler
 - 3. Parse - parse the content into JSON objects and save to disk cache
 - 4. Update - map the content to the TreeBase grammar and save to the TreeBase
 
-
-git https://github.com/breck7/treecrawler
-email feedback@treecrawler.org
-baseUrl https://treecrawler.org/
+permalink index.html
+import footer.scroll
