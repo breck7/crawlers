@@ -1,0 +1,15 @@
+title TreeCrawler
+
+* This project contains scripts for importing data from the web into TreeBases.
+
+* Crawlers generally:
+
+- 1. Match - match entity ids from the source to TreeBase ids
+- 2. Fetch - fetch content from the source site and save to disk cache
+- 3. Parse - parse the content into JSON objects and save to disk cache
+- 4. Update - map the content to the TreeBase grammar and save to the TreeBase
+
+
+git https://github.com/breck7/treecrawler
+email feedback@treecrawler.org
+baseUrl https://treecrawler.org/
