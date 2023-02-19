@@ -1,7 +1,0 @@
-cache/
-*.js
-node_modules/
-ignore/
-.DS_Store
-package-lock.json
-*.html
