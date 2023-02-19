@@ -1,4 +1,11 @@
-import header.scroll
+importOnly
+git https://github.com/breck7/treecrawler
+email feedback@treecrawler.org
+baseUrl https://treecrawler.org/
+metaTags
+scrollCssTag
+scrollHeader
+
 groups index
 title Hello world
 date 2023.02.19
@@ -8,4 +15,4 @@ startColumns 2
 * This is my first blog post using Scroll. This post will appear in the feed and on the index page.
 
 endColumns
-import footer.scroll
+scrollFooter
