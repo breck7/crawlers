@@ -11,8 +11,8 @@ const scopeName = "rijuRepl"
 class RijuImporter extends TreeBaseCrawler {
   writeLinksToDatabaseCommand() {
     this.matches.forEach(match => {
-      match.pldbFile.set(scopeName, `https://riju.codes/${match.yaml.id}`)
-      match.pldbFile.prettifyAndSave()
+      match.treeBaseFile.set(scopeName, `https://riju.codes/${match.yaml.id}`)
+      match.treeBaseFile.prettifyAndSave()
     })
   }
 
@@ -27,7 +27,7 @@ class RijuImporter extends TreeBaseCrawler {
         const match = this.base.searchForEntity(id)
         if (match)
           return {
-            pldbFile: this.base.getFile(match),
+            treeBaseFile: this.base.getFile(match),
             yaml
           }
       })
@@ -54,21 +54,21 @@ type ${type}`,
   }
 
   mergeOne(match) {
-    const { pldbFile, yaml } = match
-    const object = pldbFile.toObject()
+    const { treeBaseFile, yaml } = match
+    const object = treeBaseFile.toObject()
     const { info } = yaml
 
-    const node = pldbFile.getNode(scopeName)
+    const node = treeBaseFile.getNode(scopeName)
 
     if (yaml.template) node.appendLineAndChildren("example", yaml.template)
 
     if (info) {
       if (info.desc) node.set("description", info.desc)
       if (info.year && !object.appeared)
-        pldbFile.set("appeared", info.year.toString())
+        treeBaseFile.set("appeared", info.year.toString())
 
       if (info.web?.esolang && !object.esolang)
-        pldbFile.set("esolang", info.web?.esolang)
+        treeBaseFile.set("esolang", info.web?.esolang)
 
       if (info.ext)
         node.set(
@@ -81,7 +81,7 @@ type ${type}`,
       if (info.web.source) node.set("githubRepo", info.web.source)
     }
 
-    pldbFile.prettifyAndSave()
+    treeBaseFile.prettifyAndSave()
   }
 
   mergeInfoCommand() {
