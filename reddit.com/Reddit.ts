@@ -11,8 +11,6 @@ Disk.mkdir(cachePath)
 import { getTitle, handTitles } from "./getTitle"
 
 const subredditKeyword = "subreddit"
-const getCachePath = file => path.join(cachePath, file.subredditId + ".json")
-
 const year = "2023"
 
 class RedditImporter extends TrueCrawler {
@@ -26,8 +24,12 @@ class RedditImporter extends TrueCrawler {
     })
   }
 
+  getCachePath(file) {
+    path.join(cachePath, this.getSubredditId(file) + ".json")
+  }
+
   writeOne(file) {
-    const cachePath = getCachePath(file)
+    const cachePath = this.getCachePath(file)
     if (!Disk.exists(cachePath)) return
     const parsed = Disk.readJson(cachePath)
     const members = parsed.data.children[0].data.subscribers
@@ -42,10 +44,19 @@ class RedditImporter extends TrueCrawler {
     return this.base.filter(file => file.has(subredditKeyword))
   }
 
+  getSubredditId(file) {
+    return file
+      .get("subreddit")
+      ?.split("/")
+      .pop()
+  }
+
   async fetchOne(file) {
-    const cachePath = getCachePath(file)
+    const cachePath = this.getCachePath(file)
     if (Disk.exists(cachePath)) return this
-    const url = `https://www.reddit.com/subreddits/search.json?q=${file.subredditId}`
+    const url = `https://www.reddit.com/subreddits/search.json?q=${this.getSubredditId(
+      file
+    )}`
     console.log(`downloading ${url}`)
     await Disk.downloadJson(url, cachePath)
   }
