@@ -3,7 +3,7 @@ import * as path from "path"
 import * as csv from "fast-csv"
 import * as ss from "simple-statistics"
 
-import { TreeBaseCrawler } from "../TreeBaseCrawler"
+import { TrueBaseCrawler } from "../TrueBaseCrawler"
 
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
@@ -16,7 +16,7 @@ const filepath = cachePath + "survey_results_public.csv"
 const processedPath = cachePath + "processed.json"
 
 // https://insights.stackoverflow.com/survey
-class StackOverflowDeveloperSurveyImporter extends TreeBaseCrawler {
+class StackOverflowDeveloperSurveyImporter extends TrueBaseCrawler {
   users = {}
   processCsvCommand() {
     this.base.loadFolder()
@@ -45,7 +45,7 @@ class StackOverflowDeveloperSurveyImporter extends TreeBaseCrawler {
     this.base.loadFolder()
     const objects = JSON.parse(Disk.read(processedPath))
     Object.values(objects).forEach((row: any) => {
-      const file = this.base.getFile(row.treeBaseId)
+      const file = this.base.getFile(row.trueBaseId)
       file.appendLineAndChildren(
         "stackOverflowSurvey",
         `2021
@@ -83,7 +83,7 @@ stackOverflowSurvey
           users: 0,
           salaries: [],
           fans: 0,
-          treeBaseId: this.base.searchForEntity(lang) || hardCodedIds[lang]
+          trueBaseId: this.base.searchForEntity(lang) || hardCodedIds[lang]
         }
     }
 

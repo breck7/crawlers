@@ -1,4 +1,4 @@
-import { TreeBaseCrawler } from "../TreeBaseCrawler"
+import { TrueBaseCrawler } from "../TrueBaseCrawler"
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
 
@@ -10,7 +10,7 @@ const cacheDir = __dirname + "/cache/"
 const { Disk } = require("jtree/products/Disk.node.js")
 Disk.mkdir(cacheDir)
 
-class WhoIsImporter extends TreeBaseCrawler {
+class WhoIsImporter extends TrueBaseCrawler {
   extractDomain(file) {
     if (file.domainName) return this
     const website = file.get("website")

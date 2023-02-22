@@ -1,4 +1,4 @@
-import { PoliteCrawler, TreeBaseCrawler } from "../TreeBaseCrawler"
+import { PoliteCrawler, TrueBaseCrawler } from "../TrueBaseCrawler"
 
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
@@ -41,7 +41,7 @@ Disk.mkdir(reposDir)
 Disk.mkdir(firstCommitCache)
 Disk.mkdir(repoCountCache)
 
-class TreeBaseFileWithGitHub {
+class TrueBaseFileWithGitHub {
   constructor(file: any) {
     this.file = file
   }
@@ -249,7 +249,7 @@ class TreeBaseFileWithGitHub {
   }
 }
 
-class GitHubImporter extends TreeBaseCrawler {
+class GitHubImporter extends TrueBaseCrawler {
   async fetchAllRepoDataCommand() {
     console.log(`Fetching all...`)
     const crawler = new PoliteCrawler()
@@ -257,7 +257,7 @@ class GitHubImporter extends TreeBaseCrawler {
     await crawler.fetchAll(
       this.linkedFiles
         .filter(file => !file.getNode("githubRepo").length)
-        .map(file => new TreeBaseFileWithGitHub(file))
+        .map(file => new TrueBaseFileWithGitHub(file))
     )
   }
 
@@ -265,7 +265,7 @@ class GitHubImporter extends TreeBaseCrawler {
     // https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml
     return this.base.topLanguages
       .filter(file => file.has(githubLanguageKey))
-      .map(file => new TreeBaseFileWithGitHub(file))
+      .map(file => new TrueBaseFileWithGitHub(file))
       .reverse()
   }
 
@@ -291,7 +291,7 @@ class GitHubImporter extends TreeBaseCrawler {
 
   writeAllRepoDataCommand() {
     this.linkedFiles.forEach(file => {
-      new TreeBaseFileWithGitHub(file)
+      new TrueBaseFileWithGitHub(file)
         .writeFirstCommitToDatabase()
         .writeRepoInfoToDatabase()
         .autocompleteAppeared()
@@ -351,8 +351,8 @@ class GitHubImporter extends TreeBaseCrawler {
 
       if (group) {
         ghNode.set("group", group)
-        // const treeBaseId = this.base.searchForEntity(group)
-        // if (treeBaseId) ghNode.set("groupPldbId", treeBaseId)
+        // const trueBaseId = this.base.searchForEntity(group)
+        // if (trueBaseId) ghNode.set("groupPldbId", trueBaseId)
       }
 
       file.prettifyAndSave()
@@ -409,7 +409,7 @@ class GitHubImporter extends TreeBaseCrawler {
 
   async runAll(file) {
     if (!file.has(repoPath)) return
-    const gitFile = new TreeBaseFileWithGitHub(file)
+    const gitFile = new TrueBaseFileWithGitHub(file)
     await gitFile.fetch()
     gitFile
       .writeFirstCommitToDatabase()

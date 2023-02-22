@@ -1,4 +1,4 @@
-import { TreeBaseCrawler } from "../TreeBaseCrawler"
+import { TrueBaseCrawler } from "../TrueBaseCrawler"
 
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
@@ -20,7 +20,7 @@ const langPath = path.join(
   "All.js"
 )
 
-class TreeBaseFileWithPypl {
+class TrueBaseFileWithPypl {
   constructor(file: any, lang) {
     this.file = file
     this.lang = lang
@@ -41,7 +41,7 @@ class TreeBaseFileWithPypl {
   }
 }
 
-class PyplImporter extends TreeBaseCrawler {
+class PyplImporter extends TrueBaseCrawler {
   init() {
     Disk.write(
       langPath,
@@ -107,7 +107,7 @@ class PyplImporter extends TreeBaseCrawler {
 
   writeDataCommand() {
     this.matched.forEach(pair =>
-      new TreeBaseFileWithPypl(pair.file, pair.lang).writeInfo()
+      new TrueBaseFileWithPypl(pair.file, pair.lang).writeInfo()
     )
   }
 

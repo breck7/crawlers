@@ -1,11 +1,11 @@
 const lodash = require("lodash")
-const { TreeBase } = require("jtree/products/treeBase.node.js")
+const { TrueBase } = require("jtree/products/trueBase.node.js")
 
-class TreeBaseCrawler {
-  constructor(treebase: typeof TreeBase) {
-    this.base = treebase
+class TrueBaseCrawler {
+  constructor(trueBase: typeof TrueBase) {
+    this.base = trueBase
   }
-  base: typeof TreeBase
+  base: typeof TrueBase
 }
 
 interface PoliteCrawlerJob {
@@ -56,4 +56,4 @@ class PoliteCrawler {
   }
 }
 
-export { PoliteCrawler, TreeBaseCrawler }
+export { PoliteCrawler, TrueBaseCrawler }

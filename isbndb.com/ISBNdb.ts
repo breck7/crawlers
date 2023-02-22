@@ -1,4 +1,4 @@
-import { PoliteCrawler, TreeBaseCrawler } from "../TreeBaseCrawler"
+import { PoliteCrawler, TrueBaseCrawler } from "../TrueBaseCrawler"
 
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
@@ -32,7 +32,7 @@ const falsePositives = new Set(
   Disk.read(path.join(__dirname, "falsePositives.txt")).split("\n")
 )
 
-class TreeBaseFileForBooks {
+class TrueBaseFileForBooks {
   constructor(file: any) {
     this.file = file
   }
@@ -122,7 +122,7 @@ class TreeBaseFileForBooks {
   }
 }
 
-class ISBNdbImporter extends TreeBaseCrawler {
+class ISBNdbImporter extends TrueBaseCrawler {
   async fetchAllCommand() {
     console.log(`Fetching all...`)
     const crawler = new PoliteCrawler()
@@ -132,7 +132,7 @@ class ISBNdbImporter extends TreeBaseCrawler {
   }
 
   get files() {
-    return this.base.topLanguages.map(file => new TreeBaseFileForBooks(file))
+    return this.base.topLanguages.map(file => new TrueBaseFileForBooks(file))
   }
 
   get unfetched() {

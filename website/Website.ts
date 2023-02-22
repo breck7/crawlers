@@ -1,6 +1,6 @@
 const cheerio = require("cheerio")
 
-import { TreeBaseCrawler } from "../TreeBaseCrawler"
+import { TrueBaseCrawler } from "../TrueBaseCrawler"
 
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
@@ -109,7 +109,7 @@ class Website {
   }
 }
 
-class WebsiteImporter extends TreeBaseCrawler {
+class WebsiteImporter extends TrueBaseCrawler {
   async updateAllCommand() {
     lodash
       .shuffle(this.base.filter(file => file.has("website")))

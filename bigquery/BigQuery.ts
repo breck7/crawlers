@@ -1,4 +1,4 @@
-import { TreeBaseCrawler } from "../TreeBaseCrawler"
+import { TrueBaseCrawler } from "../TrueBaseCrawler"
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Disk } = require("jtree/products/Disk.node.js")
 const { Utils } = require("jtree/products/Utils.js")
@@ -14,7 +14,7 @@ Disk.mkdir(cacheDir)
 const filePath = path.join(cacheDir, "gh.json")
 const outputPath = path.join(cacheDir, "gh.csv")
 
-class BigQueryImporter extends TreeBaseCrawler {
+class BigQueryImporter extends TrueBaseCrawler {
   get pairs() {
     return this.table.map(row => {
       const id = this.base.searchForEntity(row.language)

@@ -1,4 +1,4 @@
-import { TreeBaseCrawler } from "../TreeBaseCrawler"
+import { TrueBaseCrawler } from "../TrueBaseCrawler"
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
 
@@ -37,7 +37,7 @@ const _ = require('underscore');`
   Disk.write(langPath, content)
 }
 
-class TreeBaseFileWithCompilerExplorer {
+class TrueBaseFileWithCompilerExplorer {
   constructor(file: any, lang) {
     this.file = file
     this.lang = lang
@@ -61,7 +61,7 @@ class TreeBaseFileWithCompilerExplorer {
   }
 }
 
-class CompilerExplorerImporter extends TreeBaseCrawler {
+class CompilerExplorerImporter extends TrueBaseCrawler {
   init() {
     prepLangFile()
   }
@@ -72,7 +72,7 @@ class CompilerExplorerImporter extends TreeBaseCrawler {
 
   writeDataCommand() {
     this.matched.forEach(pair =>
-      new TreeBaseFileWithCompilerExplorer(pair.file, pair.lang).writeInfo()
+      new TrueBaseFileWithCompilerExplorer(pair.file, pair.lang).writeInfo()
     )
   }
 

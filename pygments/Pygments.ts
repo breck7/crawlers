@@ -1,4 +1,4 @@
-import { TreeBaseCrawler } from "../TreeBaseCrawler"
+import { TrueBaseCrawler } from "../TrueBaseCrawler"
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
 const cacheDir = __dirname + "/cache/"
@@ -6,7 +6,7 @@ const cacheDir = __dirname + "/cache/"
 const { Disk } = require("jtree/products/Disk.node.js")
 const outputFile = cacheDir + "output.json"
 
-class PygmentsImporter extends TreeBaseCrawler {
+class PygmentsImporter extends TrueBaseCrawler {
   linkAllCommand() {
     this.matches.forEach(entry => {
       this.writeOne(entry.file, entry)
@@ -76,21 +76,21 @@ class PygmentsImporter extends TreeBaseCrawler {
     return this.data.map(entry => {
       entry.extensions = entry.filenames.map(ext => ext.replace("*.", ""))
       entry.filename = entry.filename.split("/").pop()
-      entry.treeBaseId =
+      entry.trueBaseId =
         this.base.searchForEntity(entry.name) ||
         this.base.searchForEntityByFileExtensions(entry.extensions)
 
-      if (entry.treeBaseId) entry.file = this.base.getFile(entry.treeBaseId)
+      if (entry.trueBaseId) entry.file = this.base.getFile(entry.trueBaseId)
       return entry
     })
   }
 
   get matches() {
-    return this.match.filter(item => item.treeBaseId)
+    return this.match.filter(item => item.trueBaseId)
   }
 
   get misses() {
-    return this.match.filter(item => !item.treeBaseId)
+    return this.match.filter(item => !item.trueBaseId)
   }
 
   addMissesCommand() {

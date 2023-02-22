@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { PoliteCrawler, TreeBaseCrawler } from "../TreeBaseCrawler"
+import { PoliteCrawler, TrueBaseCrawler } from "../TrueBaseCrawler"
 const lodash = require("lodash")
 const { Utils } = require("jtree/products/Utils.js")
-const { TreeBaseFile } = require("jtree/products/treeBase.node.js")
+const { TrueBaseFile } = require("jtree/products/trueBase.node.js")
 
 const cacheDir = __dirname + "/cache/"
 
@@ -21,42 +21,49 @@ const withContext = /(\D{3,18}[12][890]\d\d\D{1,18})/gi
 
 Disk.mkdir(cacheDir)
 
-class TreeBaseFileWithWikipedia {
+class TrueBaseFileWithWikipedia {
   constructor(file: any) {
     this.file = file
   }
 
   file: any
 
-  get treeBaseId() {
+  get trueBaseId() {
     return this.file.id
   }
 
   get cacheFilename() {
-    return Utils.titleToPermalink(this.sourceId)
+    return Utils.titleToPermalink(this.sourceId) + ".json"
   }
 
   get cachePath() {
     return cacheDir + this.cacheFilename
   }
 
+  get wikipediaTitle() {
+    return this.file
+      .get("wikipedia")
+      .replace("https://en.wikipedia.org/wiki/", "")
+      .trim()
+  }
+
   get isDownloaded() {
     return Disk.exists(this.cachePath)
   }
   get sourceId() {
-    return this.file.wikipediaTitle
+    return this.wikipediaTitle
   }
 
   async fetch() {
     if (this.isDownloaded) return 1
-    const { treeBaseId, sourceId } = this
+    const { trueBaseId, sourceId } = this
     if (!sourceId) return 0
     console.log(`downloading page: '${sourceId}'`)
     let page
     try {
       page = await wiki().page(sourceId)
     } catch (err) {
-      console.error(`Failed download for ${treeBaseId} '${sourceId}'`)
+      console.error(`Failed download for ${trueBaseId} '${sourceId}'`)
       console.error(err)
       const other = decodeURIComponent(sourceId)
       try {
@@ -87,10 +94,10 @@ class TreeBaseFileWithWikipedia {
     try {
       output.references = await page.references()
     } catch (err) {
-      console.error(`Failed references for ${treeBaseId} ${sourceId}`)
+      console.error(`Failed references for ${trueBaseId} ${sourceId}`)
     }
     //info = await article.getInfo(page)
-    console.log(`Finished ${treeBaseId}`)
+    console.log(`Finished ${trueBaseId}`)
 
     Disk.write(this.cachePath, JSON.stringify(output, null, 2))
   }
@@ -180,11 +187,22 @@ class TreeBaseFileWithWikipedia {
     //if (year) this.getBase().appendUniqueLine(lang, "wikipedia_year " + year.substr(0, 4))
   }
 
+  get infoBox() {
+    const { trueBaseId, file } = this
+
+    if (!Disk.exists(this.cachePath)) {
+      //console.log(`Wikipedia file for "${trueBaseId}" not yet downloaded.`)
+      return 1
+    }
+    const { object } = this
+    return object.info
+  }
+
   writeToDb() {
-    const { treeBaseId, file } = this
+    const { trueBaseId, file } = this
     try {
       if (!Disk.exists(this.cachePath)) {
-        //console.log(`Wikipedia file for "${treeBaseId}" not yet downloaded.`)
+        //console.log(`Wikipedia file for "${trueBaseId}" not yet downloaded.`)
         return 1
       }
       const { object } = this
@@ -202,7 +220,7 @@ class TreeBaseFileWithWikipedia {
         if (designer) console.log(designer)
         if (!file.has("creators")) file.set("creators", designerString)
       } catch (err) {
-        console.error(`Error with creators for ${treeBaseId}`)
+        console.error(`Error with creators for ${trueBaseId}`)
       }
 
       if (!file.has("appeared")) {
@@ -223,30 +241,34 @@ class TreeBaseFileWithWikipedia {
       // this.getPageId(object)
       // this.getDescription(object)
     } catch (err) {
-      console.error(treeBaseId, err)
+      console.error(trueBaseId, err)
     }
   }
 }
 
-class WikipediaImporter extends TreeBaseCrawler {
+class WikipediaImporter extends TrueBaseCrawler {
   async fetchAllCommand() {
     const crawler = new PoliteCrawler()
     await crawler.fetchAll(
-      this.linkedFiles.map(file => new TreeBaseFileWithWikipedia(file))
+      this.linkedFiles.map(file => new TrueBaseFileWithWikipedia(file))
     )
   }
 
-  async updateOneCommand(file: typeof TreeBaseFile) {
+  async updateOneCommand(file: typeof TrueBaseFile) {
     if (!file.has("wikipedia")) return
-    const wp = new TreeBaseFileWithWikipedia(file)
+    const wp = new TrueBaseFileWithWikipedia(file)
     await wp.fetch()
     wp.writeToDb()
   }
 
   writeToDatabaseCommand() {
     this.linkedFiles.forEach(file =>
-      new TreeBaseFileWithWikipedia(file).writeToDb()
+      new TrueBaseFileWithWikipedia(file).writeToDb()
     )
+  }
+
+  get filesWithWikipediaPages() {
+    return this.linkedFiles.map(file => new TrueBaseFileWithWikipedia(file))
   }
 
   get linkedFiles() {
