@@ -1,4 +1,4 @@
-import { PoliteCrawler, TreeBaseCrawler } from "../TreeBaseCrawler"
+import { PoliteCrawler, TrueBaseCrawler } from "../TrueBaseCrawler"
 const lodash = require("lodash")
 
 const { Utils } = require("jtree/products/Utils.js")
@@ -71,7 +71,7 @@ class DBLPFile {
   }
 }
 
-class DBLPImporter extends TreeBaseCrawler {
+class DBLPImporter extends TrueBaseCrawler {
   writeToDatabaseCommand() {
     this.matches.forEach(file => {
       try {

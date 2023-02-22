@@ -1,4 +1,4 @@
-import { TreeBaseCrawler } from "../TreeBaseCrawler"
+import { TrueBaseCrawler } from "../TrueBaseCrawler"
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const lodash = require("lodash")
@@ -9,7 +9,7 @@ const { Disk } = require("jtree/products/Disk.node.js")
 
 const monacoFolder = cacheDir + "monaco-editor/src/basic-languages/"
 
-class MonacoImporter extends TreeBaseCrawler {
+class MonacoImporter extends TrueBaseCrawler {
   extractComments(match) {
     const { file } = match
     const { conf } = require(match.filename)

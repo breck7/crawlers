@@ -1,4 +1,4 @@
-import { TreeBaseCrawler } from "../TreeBaseCrawler"
+import { TrueBaseCrawler } from "../TrueBaseCrawler"
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
 
@@ -11,7 +11,7 @@ const skips = [`MOONBlock`, "Executable", "Scratch ", "Pxem", "Piet"]
 
 const outputPath = cacheDir + "parsed.tree"
 
-class LeaChimImporter extends TreeBaseCrawler {
+class LeaChimImporter extends TrueBaseCrawler {
   parseAllCommand() {
     const entries = []
     const folders = Disk.getFolders(hwDir).filter(name => !name.startsWith("."))

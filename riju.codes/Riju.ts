@@ -1,4 +1,4 @@
-import { TreeBaseCrawler } from "../TreeBaseCrawler"
+import { TrueBaseCrawler } from "../TrueBaseCrawler"
 
 import { parse } from "yaml"
 const { Utils } = require("jtree/products/Utils.js")
@@ -8,11 +8,11 @@ const cachePath = __dirname + "/cache/riju/langs/"
 
 const scopeName = "rijuRepl"
 
-class RijuImporter extends TreeBaseCrawler {
+class RijuImporter extends TrueBaseCrawler {
   writeLinksToDatabaseCommand() {
     this.matches.forEach(match => {
-      match.treeBaseFile.set(scopeName, `https://riju.codes/${match.yaml.id}`)
-      match.treeBaseFile.prettifyAndSave()
+      match.trueBaseFile.set(scopeName, `https://riju.codes/${match.yaml.id}`)
+      match.trueBaseFile.prettifyAndSave()
     })
   }
 
@@ -27,7 +27,7 @@ class RijuImporter extends TreeBaseCrawler {
         const match = this.base.searchForEntity(id)
         if (match)
           return {
-            treeBaseFile: this.base.getFile(match),
+            trueBaseFile: this.base.getFile(match),
             yaml
           }
       })
@@ -54,21 +54,21 @@ type ${type}`,
   }
 
   mergeOne(match) {
-    const { treeBaseFile, yaml } = match
-    const object = treeBaseFile.toObject()
+    const { trueBaseFile, yaml } = match
+    const object = trueBaseFile.toObject()
     const { info } = yaml
 
-    const node = treeBaseFile.getNode(scopeName)
+    const node = trueBaseFile.getNode(scopeName)
 
     if (yaml.template) node.appendLineAndChildren("example", yaml.template)
 
     if (info) {
       if (info.desc) node.set("description", info.desc)
       if (info.year && !object.appeared)
-        treeBaseFile.set("appeared", info.year.toString())
+        trueBaseFile.set("appeared", info.year.toString())
 
       if (info.web?.esolang && !object.esolang)
-        treeBaseFile.set("esolang", info.web?.esolang)
+        trueBaseFile.set("esolang", info.web?.esolang)
 
       if (info.ext)
         node.set(
@@ -81,7 +81,7 @@ type ${type}`,
       if (info.web.source) node.set("githubRepo", info.web.source)
     }
 
-    treeBaseFile.prettifyAndSave()
+    trueBaseFile.prettifyAndSave()
   }
 
   mergeInfoCommand() {
