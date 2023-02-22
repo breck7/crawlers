@@ -1,4 +1,4 @@
-import { TrueBaseCrawler } from "../TrueBaseCrawler"
+import { TrueCrawler } from "../TrueCrawler"
 
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
@@ -41,7 +41,7 @@ class TrueBaseFileWithPypl {
   }
 }
 
-class PyplImporter extends TrueBaseCrawler {
+class PyplImporter extends TrueCrawler {
   init() {
     Disk.write(
       langPath,

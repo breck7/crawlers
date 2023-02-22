@@ -1,4 +1,4 @@
-import { TrueBaseCrawler } from "../TrueBaseCrawler"
+import { TrueCrawler } from "../TrueCrawler"
 
 const path = require("path")
 const dayjs = require("dayjs")
@@ -13,7 +13,7 @@ import { getTitle, handTitles } from "./getTitle"
 const subredditKeyword = "subreddit"
 const getCachePath = file => path.join(cachePath, file.subredditId + ".json")
 
-class RedditImporter extends TrueBaseCrawler {
+class RedditImporter extends TrueCrawler {
   writeToDatabaseCommand() {
     this.matches.forEach(file => {
       try {

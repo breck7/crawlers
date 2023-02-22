@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { PoliteCrawler, TrueBaseCrawler } from "../TrueBaseCrawler"
+import { PoliteCrawler, TrueCrawler } from "../TrueCrawler"
 const lodash = require("lodash")
 const { Utils } = require("jtree/products/Utils.js")
 const { TrueBaseFile } = require("jtree/products/trueBase.node.js")
@@ -246,7 +246,7 @@ class TrueBaseFileWithWikipedia {
   }
 }
 
-class WikipediaImporter extends TrueBaseCrawler {
+class WikipediaImporter extends TrueCrawler {
   async fetchAllCommand() {
     const crawler = new PoliteCrawler()
     await crawler.fetchAll(

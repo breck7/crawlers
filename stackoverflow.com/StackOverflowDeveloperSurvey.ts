@@ -3,7 +3,7 @@ import * as path from "path"
 import * as csv from "fast-csv"
 import * as ss from "simple-statistics"
 
-import { TrueBaseCrawler } from "../TrueBaseCrawler"
+import { TrueCrawler } from "../TrueCrawler"
 
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
@@ -16,7 +16,7 @@ const filepath = cachePath + "survey_results_public.csv"
 const processedPath = cachePath + "processed.json"
 
 // https://insights.stackoverflow.com/survey
-class StackOverflowDeveloperSurveyImporter extends TrueBaseCrawler {
+class StackOverflowDeveloperSurveyImporter extends TrueCrawler {
   users = {}
   processCsvCommand() {
     this.base.loadFolder()

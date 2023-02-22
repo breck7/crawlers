@@ -1,5 +1,5 @@
 {
-  "name": "treecrawler",
+  "name": "truecrawler",
   "version": "1.0.0",
   "description": "Crawlers for extracting data from the web for TrueBases.",
   "main": "index.js",

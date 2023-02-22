@@ -1,4 +1,4 @@
-import { PoliteCrawler, TrueBaseCrawler } from "../TrueBaseCrawler"
+import { PoliteCrawler, TrueCrawler } from "../TrueCrawler"
 
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
@@ -249,7 +249,7 @@ class TrueBaseFileWithGitHub {
   }
 }
 
-class GitHubImporter extends TrueBaseCrawler {
+class GitHubImporter extends TrueCrawler {
   async fetchAllRepoDataCommand() {
     console.log(`Fetching all...`)
     const crawler = new PoliteCrawler()

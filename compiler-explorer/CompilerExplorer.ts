@@ -1,4 +1,4 @@
-import { TrueBaseCrawler } from "../TrueBaseCrawler"
+import { TrueCrawler } from "../TrueCrawler"
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
 
@@ -61,7 +61,7 @@ class TrueBaseFileWithCompilerExplorer {
   }
 }
 
-class CompilerExplorerImporter extends TrueBaseCrawler {
+class CompilerExplorerImporter extends TrueCrawler {
   init() {
     prepLangFile()
   }
