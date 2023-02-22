@@ -1,6 +1,6 @@
 // Docs: https://api.semanticscholar.org/api-docs/graph#tag/Paper-Data/operation/get_graph_get_paper_search
 
-import { PoliteCrawler, TrueBaseCrawler } from "../TrueBaseCrawler"
+import { PoliteCrawler, TrueCrawler } from "../TrueCrawler"
 
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
@@ -134,7 +134,7 @@ class TrueBaseFileForSemanticScholar {
   }
 }
 
-class SemanticScholarImporter extends TrueBaseCrawler {
+class SemanticScholarImporter extends TrueCrawler {
   async fetchAllCommand() {
     console.log(`Fetching all...`)
     const crawler = new PoliteCrawler()

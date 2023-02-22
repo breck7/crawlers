@@ -1,4 +1,4 @@
-import { TrueBaseCrawler } from "../TrueBaseCrawler"
+import { TrueCrawler } from "../TrueCrawler"
 
 import { parse } from "yaml"
 const { Utils } = require("jtree/products/Utils.js")
@@ -8,7 +8,7 @@ const cachePath = __dirname + "/cache/riju/langs/"
 
 const scopeName = "rijuRepl"
 
-class RijuImporter extends TrueBaseCrawler {
+class RijuImporter extends TrueCrawler {
   writeLinksToDatabaseCommand() {
     this.matches.forEach(match => {
       match.trueBaseFile.set(scopeName, `https://riju.codes/${match.yaml.id}`)

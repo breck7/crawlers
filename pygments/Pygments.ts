@@ -1,4 +1,4 @@
-import { TrueBaseCrawler } from "../TrueBaseCrawler"
+import { TrueCrawler } from "../TrueCrawler"
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
 const cacheDir = __dirname + "/cache/"
@@ -6,7 +6,7 @@ const cacheDir = __dirname + "/cache/"
 const { Disk } = require("jtree/products/Disk.node.js")
 const outputFile = cacheDir + "output.json"
 
-class PygmentsImporter extends TrueBaseCrawler {
+class PygmentsImporter extends TrueCrawler {
   linkAllCommand() {
     this.matches.forEach(entry => {
       this.writeOne(entry.file, entry)

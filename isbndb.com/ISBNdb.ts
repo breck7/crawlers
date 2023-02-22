@@ -1,4 +1,4 @@
-import { PoliteCrawler, TrueBaseCrawler } from "../TrueBaseCrawler"
+import { PoliteCrawler, TrueCrawler } from "../TrueCrawler"
 
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
@@ -122,7 +122,7 @@ class TrueBaseFileForBooks {
   }
 }
 
-class ISBNdbImporter extends TrueBaseCrawler {
+class ISBNdbImporter extends TrueCrawler {
   async fetchAllCommand() {
     console.log(`Fetching all...`)
     const crawler = new PoliteCrawler()
