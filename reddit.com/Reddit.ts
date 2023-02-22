@@ -25,7 +25,7 @@ class RedditImporter extends TrueCrawler {
   }
 
   getCachePath(file) {
-    path.join(cachePath, this.getSubredditId(file) + ".json")
+    return path.join(cachePath, this.getSubredditId(file) + ".json")
   }
 
   writeOne(file) {
