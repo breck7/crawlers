@@ -13,6 +13,8 @@ import { getTitle, handTitles } from "./getTitle"
 const subredditKeyword = "subreddit"
 const getCachePath = file => path.join(cachePath, file.subredditId + ".json")
 
+const year = "2023"
+
 class RedditImporter extends TrueCrawler {
   writeToDatabaseCommand() {
     this.matches.forEach(file => {
@@ -29,7 +31,7 @@ class RedditImporter extends TrueCrawler {
     if (!Disk.exists(cachePath)) return
     const parsed = Disk.readJson(cachePath)
     const members = parsed.data.children[0].data.subscribers
-    const key = `${subredditKeyword} memberCount 2022`
+    const key = `${subredditKeyword} memberCount ${year}`
     if (!file.get(key)) {
       file.set(key, members.toString())
       file.prettifyAndSave()
