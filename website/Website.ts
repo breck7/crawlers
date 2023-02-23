@@ -31,19 +31,21 @@ class Website {
     file.prettifyAndSave()
   }
 
-  get path() {
+  get cachePath() {
     return cacheDir + this.file.id + ".html"
   }
 
   async download() {
-    const { path } = this
-    if (Disk.exists(path)) return this
-    console.log("downloading to " + path)
-    await Disk.downloadPlain(this.file.get("website"), path)
+    const { cachePath } = this
+    if (Disk.exists(cachePath)) return this
+    console.log("downloading to " + cachePath)
+    const result = await fetch(this.file.get("website"))
+    const text = await result.text()
+    Disk.write(cachePath, text)
   }
 
   get content() {
-    return Disk.read(this.path)
+    return Disk.read(this.cachePath)
   }
 
   extractGitHub() {
@@ -97,7 +99,7 @@ class Website {
               id.includes(m) ||
               file.toString().includes(m)
             ) {
-              file.set("twitter", m)
+              file.set("twitter", `https://twitter.com/${m}`)
             }
           })
       }
@@ -117,6 +119,7 @@ class WebsiteImporter extends TrueCrawler {
         try {
           await new Website(file).update()
         } catch (err) {
+          console.error(err)
           console.log(`Error with ${file.id}`)
         }
       })
