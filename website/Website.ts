@@ -24,6 +24,8 @@ class Website {
     if (!file.has("website")) return this
     await this.download()
 
+    if (!Disk.exists(this.cachePath)) return
+
     this.extractTwitter()
     this.extractGitHub()
     //this.extractTitle()
@@ -38,10 +40,15 @@ class Website {
   async download() {
     const { cachePath } = this
     if (Disk.exists(cachePath)) return this
-    console.log("downloading to " + cachePath)
-    const result = await fetch(this.file.get("website"))
-    const text = await result.text()
-    Disk.write(cachePath, text)
+
+    try {
+      console.log("downloading to " + cachePath)
+      const result = await fetch(this.file.get("website"))
+      const text = await result.text()
+      Disk.write(cachePath, text)
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   get content() {
@@ -80,6 +87,17 @@ class Website {
     // todo
   }
 
+  extractPhoneNumber() {
+    const { file } = this
+    if (file.has("phoneNumber")) return
+    if (!Disk.exists(this.cachePath)) return
+    const matches = this.content.match(/(1-\d\d\d-\d\d\d-\d\d\d\d)/)
+    if (matches) {
+      file.set("phoneNumber", matches[0])
+      file.prettifyAndSave()
+    }
+  }
+
   extractTwitter() {
     const { file } = this
     if (file.has("twitter")) return
@@ -112,6 +130,16 @@ class Website {
 }
 
 class WebsiteImporter extends TrueCrawler {
+  get matches() {
+    return this.base
+      .filter(file => file.has("website"))
+      .map(file => new Website(file))
+  }
+
+  async downloadAllCommand() {
+    await Promise.all(this.matches.map(file => file.download()))
+  }
+
   async updateAllCommand() {
     lodash
       .shuffle(this.base.filter(file => file.has("website")))
