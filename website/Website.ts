@@ -30,10 +30,16 @@ class Website {
   }
 
   extractAll() {
-    this.extractTwitter()
+    if (!Disk.exists(this.cachePath)) return
+    this.extractSocial("twitter", "twitter")
+    this.extractSocial("instagram", "instagram")
+    this.extractSocial("facebook", "facebook")
+    this.extractSocial("pinterest", "pinterest")
+    this.extractSocial("youtube", "youTubeChannel", "user/")
+    this.extractSocial("linkedin", "linkedin", "company/")
     this.extractPhoneNumber()
     this.extractGitHub()
-    this.extractTitle()
+    //this.extractTitle()
     this.file.prettifyAndSave()
   }
 
@@ -100,18 +106,19 @@ class Website {
     return this
   }
 
-  extractTwitter() {
+  extractSocial(name: string, propName: string, basePath = "") {
     const { file } = this
-    if (file.has("twitter")) return
+    if (file.has(propName)) return
     const str = this.content.toLowerCase()
     const { id } = file
-    if (str.includes("twitter")) {
+    if (str.includes(name)) {
       // todo: update
-      const matches = str.match(/twitter\.com\/([^"\/ \?\']+)/g)
+      const regex = new RegExp(`${name}\.com\/${basePath}([^"\/ \?\']+)`, "g")
+      const matches = str.match(regex)
 
       if (matches) {
         matches
-          .map(m => m.replace("twitter.com/", ""))
+          .map(m => m.replace(`${name}.com/${basePath}`, ""))
           .forEach(m => {
             if (
               m === id ||
@@ -119,7 +126,7 @@ class Website {
               id.includes(m) ||
               file.toString().includes(m)
             ) {
-              file.set("twitter", `https://twitter.com/${m}`)
+              file.set(propName, `https://${name}.com/${basePath}${m}`)
             }
           })
       }
