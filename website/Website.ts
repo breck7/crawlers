@@ -31,6 +31,7 @@ class Website {
 
   extractAll() {
     this.extractTwitter()
+    this.extractPhoneNumber()
     this.extractGitHub()
     this.extractTitle()
     this.file.prettifyAndSave()
