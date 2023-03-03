@@ -12,7 +12,7 @@ Disk.mkdir(cacheDir)
 
 class WhoIsImporter extends TrueCrawler {
   extractDomain(file) {
-    if (file.domainName) return this
+    if (file.get("domainName")) return this
     const website = file.get("website")
     if (!website) return this
     const uri = new URL(website)
@@ -33,7 +33,8 @@ class WhoIsImporter extends TrueCrawler {
 
   async fetchData(file) {
     if (file.get("domainName registered")) return 1
-    const { id, domainName } = file
+    const { id } = file
+    const domainName = file.get("domainName")
 
     const path = this.makePath(id)
     if (Disk.exists(path)) return 1
@@ -44,7 +45,8 @@ class WhoIsImporter extends TrueCrawler {
   }
 
   writeData(file) {
-    const { id, domainName } = file
+    const { id } = file
+    const domainName = file.get("domainName")
     const path = this.makePath(id)
     if (!Disk.exists(path)) return 1
     const results = Disk.readJson(path)
@@ -54,18 +56,18 @@ class WhoIsImporter extends TrueCrawler {
 
     year = year.match(/(198\d|199\d|200\d|201\d|202\d)/)[1]
     file.set("domainName registered", year)
-    if (!file.has("appeared")) file.set("appeared", year)
+    //if (!file.has("appeared")) file.set("appeared", year)
     file.prettifyAndSave()
   }
 
   async updateOne(file) {
     try {
       this.extractDomain(file)
-      if (!file.domainName) return
+      if (!file.get("domainName")) return
       await this.fetchData(file)
       this.writeData(file)
     } catch (err) {
-      console.log(`Error for ${file.domainName}`)
+      console.log(`Error for ${file.get("domainName")}`)
       console.log(err)
     }
   }

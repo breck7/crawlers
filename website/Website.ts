@@ -26,11 +26,15 @@ class Website {
 
     if (!Disk.exists(this.cachePath)) return
 
-    this.extractTwitter()
-    this.extractGitHub()
-    //this.extractTitle()
     //this.extractText()
-    file.prettifyAndSave()
+  }
+
+  extractAll() {
+    this.extractTwitter()
+    this.extractPhoneNumber()
+    this.extractGitHub()
+    this.extractTitle()
+    this.file.prettifyAndSave()
   }
 
   get cachePath() {
@@ -92,10 +96,8 @@ class Website {
     if (file.has("phoneNumber")) return
     if (!Disk.exists(this.cachePath)) return
     const matches = this.content.match(/(1-\d\d\d-\d\d\d-\d\d\d\d)/)
-    if (matches) {
-      file.set("phoneNumber", matches[0])
-      file.prettifyAndSave()
-    }
+    if (matches) file.set("phoneNumber", matches[0])
+    return this
   }
 
   extractTwitter() {
