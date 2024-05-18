@@ -1,4 +1,4 @@
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
 
@@ -11,7 +11,7 @@ const skips = [`MOONBlock`, "Executable", "Scratch ", "Pxem", "Piet"]
 
 const outputPath = cacheDir + "parsed.tree"
 
-class LeaChimImporter extends TrueCrawler {
+class LeaChimImporter extends MeasurementsCrawler {
   parseAllCommand() {
     const entries = []
     const folders = Disk.getFolders(hwDir).filter(name => !name.startsWith("."))
@@ -77,11 +77,11 @@ code
   get matched() {
     return this.parsed
       .map(node => {
-        const hit = this.base.searchForEntity(node.get("name"))
+        const hit = this.searchForConcept(node.get("name"))
         if (!hit) return false
 
         return {
-          file: this.base.getFile(hit),
+          file: this.getFile(hit),
           hit: node
         }
       })

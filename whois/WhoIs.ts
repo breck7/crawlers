@@ -1,4 +1,4 @@
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
 
@@ -10,7 +10,7 @@ const cacheDir = __dirname + "/cache/"
 const { Disk } = require("jtree/products/Disk.node.js")
 Disk.mkdir(cacheDir)
 
-class WhoIsImporter extends TrueCrawler {
+class WhoIsImporter extends MeasurementsCrawler {
   extractDomain(file) {
     if (file.get("domainName")) return this
     const website = file.get("website")
@@ -56,7 +56,7 @@ class WhoIsImporter extends TrueCrawler {
 
     year = year.match(/(198\d|199\d|200\d|201\d|202\d)/)[1]
     file.set("domainName registered", year)
-    //if (!file.has("appeared")) file.set("appeared", year)
+    //if (!file.appeared) file.set("appeared", year)
     file.prettifyAndSave()
   }
 
@@ -73,12 +73,12 @@ class WhoIsImporter extends TrueCrawler {
   }
 
   async updateOneCommand(id) {
-    this.updateOne(this.base.getFile(id))
+    this.updateOne(this.getFile(id))
   }
 
   async updateAllCommand() {
     lodash
-      .shuffle(this.base.filter(file => file.has("website")))
+      .shuffle(this.concepts.filter(file => file.website))
       .forEach(async file => this.updateOne(file))
   }
 }

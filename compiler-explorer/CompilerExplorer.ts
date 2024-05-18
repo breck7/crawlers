@@ -1,4 +1,4 @@
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
 
@@ -37,7 +37,7 @@ const _ = require('underscore');`
   Disk.write(langPath, content)
 }
 
-class TrueBaseFileWithCompilerExplorer {
+class ConceptFileWithCompilerExplorer {
   constructor(file: any, lang) {
     this.file = file
     this.lang = lang
@@ -61,7 +61,7 @@ class TrueBaseFileWithCompilerExplorer {
   }
 }
 
-class CompilerExplorerImporter extends TrueCrawler {
+class CompilerExplorerImporter extends MeasurementsCrawler {
   init() {
     prepLangFile()
   }
@@ -72,7 +72,7 @@ class CompilerExplorerImporter extends TrueCrawler {
 
   writeDataCommand() {
     this.matched.forEach(pair =>
-      new TrueBaseFileWithCompilerExplorer(pair.file, pair.lang).writeInfo()
+      new ConceptFileWithCompilerExplorer(pair.file, pair.lang).writeInfo()
     )
   }
 
@@ -90,8 +90,8 @@ class CompilerExplorerImporter extends TrueCrawler {
 
   get pairs() {
     return Object.values(this.languages).map((lang: any) => {
-      const id = this.base.searchForEntity(lang.name)
-      return { file: this.base.getFile(id), lang }
+      const id = this.searchForConcept(lang.name)
+      return { file: this.getFile(id), lang }
     })
   }
 

@@ -1,4 +1,4 @@
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const lodash = require("lodash")
@@ -9,7 +9,7 @@ const { Disk } = require("jtree/products/Disk.node.js")
 
 const monacoFolder = cacheDir + "monaco-editor/src/basic-languages/"
 
-class MonacoImporter extends TrueCrawler {
+class MonacoImporter extends MeasurementsCrawler {
   extractComments(match) {
     const { file } = match
     const { conf } = require(match.filename)
@@ -36,7 +36,7 @@ class MonacoImporter extends TrueCrawler {
     const { file } = match
     try {
       const { language } = require(match.filename)
-      if (language.keywords && !file.has("keywords"))
+      if (language.keywords && !file.keywords)
         file.set("keywords", language.keywords.join(" "))
     } catch (err) {
       console.error(`Error with keywords with ${file.id}`)
@@ -94,8 +94,8 @@ class MonacoImporter extends TrueCrawler {
   get paired() {
     return Disk.getFolders(monacoFolder).map(path => {
       const name = Disk.getFileName(path)
-      const matched = this.base.searchForEntity(name)
-      const file = matched ? this.base.getFile(matched) : undefined
+      const matched = this.searchForConcept(name)
+      const file = matched ? this.getFile(matched) : undefined
       const filename = path + "/" + name + ".js"
       return {
         path,

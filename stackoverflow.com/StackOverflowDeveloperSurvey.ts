@@ -3,7 +3,7 @@ import * as path from "path"
 import * as csv from "fast-csv"
 import * as ss from "simple-statistics"
 
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
@@ -16,10 +16,9 @@ const filepath = cachePath + "survey_results_public.csv"
 const processedPath = cachePath + "processed.json"
 
 // https://insights.stackoverflow.com/survey
-class StackOverflowDeveloperSurveyImporter extends TrueCrawler {
+class StackOverflowDeveloperSurveyImporter extends MeasurementsCrawler {
   users = {}
   processCsvCommand() {
-    this.base.loadFolder()
     fs.createReadStream(filepath)
       .pipe(csv.parse({ headers: true }))
       .on("error", error => console.error(error))
@@ -42,10 +41,9 @@ class StackOverflowDeveloperSurveyImporter extends TrueCrawler {
   }
 
   writeToDatabaseCommand() {
-    this.base.loadFolder()
     const objects = JSON.parse(Disk.read(processedPath))
     Object.values(objects).forEach((row: any) => {
-      const file = this.base.getFile(row.trueBaseId)
+      const file = this.getFile(row.conceptId)
       file.appendLineAndChildren(
         "stackOverflowSurvey",
         `2021
@@ -83,7 +81,7 @@ stackOverflowSurvey
           users: 0,
           salaries: [],
           fans: 0,
-          trueBaseId: this.base.searchForEntity(lang) || hardCodedIds[lang]
+          conceptId: this.searchForConcept(lang) || hardCodedIds[lang]
         }
     }
 

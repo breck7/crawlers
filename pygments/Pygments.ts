@@ -1,4 +1,4 @@
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
 const cacheDir = __dirname + "/cache/"
@@ -6,7 +6,7 @@ const cacheDir = __dirname + "/cache/"
 const { Disk } = require("jtree/products/Disk.node.js")
 const outputFile = cacheDir + "output.json"
 
-class PygmentsImporter extends TrueCrawler {
+class PygmentsImporter extends MeasurementsCrawler {
   linkAllCommand() {
     this.matches.forEach(entry => {
       this.writeOne(entry.file, entry)
@@ -20,8 +20,8 @@ class PygmentsImporter extends TrueCrawler {
   }
 
   extractData(file, entry) {
-    if (!file.has("pygmentsHighlighter")) return
-    if (!file.has("keywords") && entry.keywords.length)
+    if (!file.pygmentsHighlighter) return
+    if (!file.keywords && entry.keywords.length)
       file.set("keywords", entry.keywords.join(" "))
 
     const nums = [
@@ -58,7 +58,7 @@ class PygmentsImporter extends TrueCrawler {
   }
 
   writeOne(file, entry) {
-    if (file.has("pygmentsHighlighter")) return
+    if (file.pygmentsHighlighter) return
 
     file.set("pygmentsHighlighter", entry.name)
     file.set("pygmentsHighlighter filename", entry.filename)
@@ -76,21 +76,21 @@ class PygmentsImporter extends TrueCrawler {
     return this.data.map(entry => {
       entry.extensions = entry.filenames.map(ext => ext.replace("*.", ""))
       entry.filename = entry.filename.split("/").pop()
-      entry.trueBaseId =
-        this.base.searchForEntity(entry.name) ||
-        this.base.searchForEntityByFileExtensions(entry.extensions)
+      entry.conceptId =
+        this.searchForConcept(entry.name) ||
+        this.searchForConceptByFileExtensions(entry.extensions)
 
-      if (entry.trueBaseId) entry.file = this.base.getFile(entry.trueBaseId)
+      if (entry.conceptId) entry.file = this.getFile(entry.conceptId)
       return entry
     })
   }
 
   get matches() {
-    return this.match.filter(item => item.trueBaseId)
+    return this.match.filter(item => item.conceptId)
   }
 
   get misses() {
-    return this.match.filter(item => !item.trueBaseId)
+    return this.match.filter(item => !item.conceptId)
   }
 
   addMissesCommand() {
@@ -100,8 +100,8 @@ class PygmentsImporter extends TrueCrawler {
         const website = miss.url.includes("github")
           ? `githubRepo ${miss.url}`
           : `website ${miss.url}`
-        const newFile = this.base.createFile(`title ${miss.name}
-type pl
+        const newFile = this.createFile(`id ${miss.name}
+tags pl
 ${website}`)
         this.writeOne(newFile, miss)
       })

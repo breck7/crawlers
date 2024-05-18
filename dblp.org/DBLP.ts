@@ -1,4 +1,4 @@
-import { PoliteCrawler, TrueCrawler } from "../TrueCrawler"
+import { PoliteCrawler, MeasurementsCrawler } from "../MeasurementsCrawler"
 const lodash = require("lodash")
 
 const { Utils } = require("jtree/products/Utils.js")
@@ -34,7 +34,7 @@ class DBLPFile {
     const { file } = this
     const path = this.cachePath
     if (!Disk.exists(path)) return
-    if (file.has("dblp")) return
+    if (file.dblp) return
 
     const parsed = Disk.readJson(path)
     const regex = new RegExp(`\\b${file.title.toLowerCase()}\\b`)
@@ -71,7 +71,7 @@ class DBLPFile {
   }
 }
 
-class DBLPImporter extends TrueCrawler {
+class DBLPImporter extends MeasurementsCrawler {
   writeToDatabaseCommand() {
     this.matches.forEach(file => {
       try {
@@ -83,7 +83,7 @@ class DBLPImporter extends TrueCrawler {
   }
 
   get matches() {
-    const files = this.base.filter(file => file.isLanguage)
+    const files = this.concepts.filter(file => file.isLanguage)
 
     const sorted = lodash.sortBy(files, file => file.rank)
 

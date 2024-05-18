@@ -1,4 +1,4 @@
-import { PoliteCrawler, TrueCrawler } from "../TrueCrawler"
+import { PoliteCrawler, MeasurementsCrawler } from "../MeasurementsCrawler"
 
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
@@ -41,7 +41,7 @@ Disk.mkdir(reposDir)
 Disk.mkdir(firstCommitCache)
 Disk.mkdir(repoCountCache)
 
-class TrueBaseFileWithGitHub {
+class ConceptFileWithGitHub {
   constructor(file: any) {
     this.file = file
   }
@@ -153,7 +153,7 @@ class TrueBaseFileWithGitHub {
 
     if (typeof obj === "string") throw new Error("string:" + obj)
 
-    if (!file.has("website") && obj.homepage) file.set("website", obj.homepage)
+    if (!file.website && obj.homepage) file.set("website", obj.homepage)
 
     githubNode.setProperties({
       stars: obj.stargazers_count.toString(),
@@ -249,7 +249,7 @@ class TrueBaseFileWithGitHub {
   }
 }
 
-class GitHubImporter extends TrueCrawler {
+class GitHubImporter extends MeasurementsCrawler {
   async fetchAllRepoDataCommand() {
     console.log(`Fetching all...`)
     const crawler = new PoliteCrawler()
@@ -257,15 +257,15 @@ class GitHubImporter extends TrueCrawler {
     await crawler.fetchAll(
       this.linkedFiles
         .filter(file => !file.getNode("githubRepo").length)
-        .map(file => new TrueBaseFileWithGitHub(file))
+        .map(file => new ConceptFileWithGitHub(file))
     )
   }
 
   get githubOfficiallySupportedLanguages() {
     // https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml
-    return this.base.topLanguages
-      .filter(file => file.has(githubLanguageKey))
-      .map(file => new TrueBaseFileWithGitHub(file))
+    return this.concepts
+      .filter(file => file[githubLanguageKey])
+      .map(file => new ConceptFileWithGitHub(file))
       .reverse()
   }
 
@@ -291,7 +291,7 @@ class GitHubImporter extends TrueCrawler {
 
   writeAllRepoDataCommand() {
     this.linkedFiles.forEach(file => {
-      new TrueBaseFileWithGitHub(file)
+      new ConceptFileWithGitHub(file)
         .writeFirstCommitToDatabase()
         .writeRepoInfoToDatabase()
         .autocompleteAppeared()
@@ -351,8 +351,8 @@ class GitHubImporter extends TrueCrawler {
 
       if (group) {
         ghNode.set("group", group)
-        // const trueBaseId = this.base.searchForEntity(group)
-        // if (trueBaseId) ghNode.set("groupPldbId", trueBaseId)
+        // const conceptId = this.searchForConcept(group)
+        // if (conceptId) ghNode.set("groupPldbId", conceptId)
       }
 
       file.prettifyAndSave()
@@ -373,8 +373,8 @@ class GitHubImporter extends TrueCrawler {
 
   get pairs() {
     return this.langs.map(lang => {
-      const id = this.base.searchForEntity(lang.title)
-      return { file: this.base.getFile(id), lang }
+      const id = this.searchForConcept(lang.title)
+      return { file: this.getFile(id), lang }
     })
   }
 
@@ -390,7 +390,7 @@ class GitHubImporter extends TrueCrawler {
 
   listOutdatedLangsCommand() {
     const map = this.yamlMap
-    this.base.forEach(file => {
+    this.concepts.forEach(file => {
       const title = file.get("githubLanguage")
       if (title && !map[title])
         console.log(`Outdated: "${file.id}" has "${title}"`)
@@ -404,12 +404,12 @@ class GitHubImporter extends TrueCrawler {
   }
 
   get linkedFiles() {
-    return this.base.filter(file => file.has(repoPath))
+    return this.concepts.filter(file => file.has(repoPath))
   }
 
   async runAll(file) {
     if (!file.has(repoPath)) return
-    const gitFile = new TrueBaseFileWithGitHub(file)
+    const gitFile = new ConceptFileWithGitHub(file)
     await gitFile.fetch()
     gitFile
       .writeFirstCommitToDatabase()

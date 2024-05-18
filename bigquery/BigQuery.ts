@@ -1,4 +1,4 @@
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Disk } = require("jtree/products/Disk.node.js")
 const { Utils } = require("jtree/products/Utils.js")
@@ -14,11 +14,11 @@ Disk.mkdir(cacheDir)
 const filePath = path.join(cacheDir, "gh.json")
 const outputPath = path.join(cacheDir, "gh.csv")
 
-class BigQueryImporter extends TrueCrawler {
+class BigQueryImporter extends MeasurementsCrawler {
   get pairs() {
     return this.table.map(row => {
-      const id = this.base.searchForEntity(row.language)
-      return { file: this.base.getFile(id), row }
+      const id = this.searchForConcept(row.language)
+      return { file: this.getFile(id), row }
     })
   }
 

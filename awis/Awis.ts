@@ -1,4 +1,4 @@
-import { PoliteCrawler, TrueCrawler } from "../TrueCrawler"
+import { PoliteCrawler, MeasurementsCrawler } from "../MeasurementsCrawler"
 
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
@@ -91,13 +91,13 @@ class AwisFile {
   }
 }
 
-class AwisImporter extends TrueCrawler {
+class AwisImporter extends MeasurementsCrawler {
   writeAllCommand() {
-    this.base.forEach(file => new AwisFile(file).write())
+    this.concepts.forEach(file => new AwisFile(file).write())
   }
 
   async downloadAllCommand() {
-    await Promise.all(this.base.map(file => new AwisFile(file).download()))
+    await Promise.all(this.concepts.map(file => new AwisFile(file).download()))
   }
 }
 

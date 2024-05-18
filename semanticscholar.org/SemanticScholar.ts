@@ -1,6 +1,6 @@
 // Docs: https://api.semanticscholar.org/api-docs/graph#tag/Paper-Data/operation/get_graph_get_paper_search
 
-import { PoliteCrawler, TrueCrawler } from "../TrueCrawler"
+import { PoliteCrawler, MeasurementsCrawler } from "../MeasurementsCrawler"
 
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
@@ -22,7 +22,7 @@ const downloadJson = async (url, destination) => {
 
 Disk.mkdir(cacheDir)
 
-class TrueBaseFileForSemanticScholar {
+class ConceptFileForSemanticScholar {
   constructor(file: any) {
     this.file = file
   }
@@ -134,7 +134,7 @@ class TrueBaseFileForSemanticScholar {
   }
 }
 
-class SemanticScholarImporter extends TrueCrawler {
+class SemanticScholarImporter extends MeasurementsCrawler {
   async fetchAllCommand() {
     console.log(`Fetching all...`)
     const crawler = new PoliteCrawler()
@@ -144,9 +144,7 @@ class SemanticScholarImporter extends TrueCrawler {
   }
 
   get files() {
-    return this.base.topLanguages.map(
-      file => new TrueBaseFileForSemanticScholar(file)
-    )
+    return this.concepts.map(file => new ConceptFileForSemanticScholar(file))
   }
 
   get unfetched() {

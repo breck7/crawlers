@@ -1,6 +1,6 @@
 const cheerio = require("cheerio")
 
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
@@ -21,7 +21,7 @@ class Website {
 
   async update() {
     const { file } = this
-    if (!file.has("website")) return this
+    if (!file.website) return this
     await this.download()
 
     if (!Disk.exists(this.cachePath)) return
@@ -67,7 +67,7 @@ class Website {
 
   extractGitHub() {
     const { file } = this
-    if (file.has("githubRepo")) return this
+    if (file.githubRepo) return this
 
     let potentialHits = Utils.getLinks(this.content.toLowerCase()).filter(
       link => {
@@ -99,7 +99,7 @@ class Website {
 
   extractPhoneNumber() {
     const { file } = this
-    if (file.has("phoneNumber")) return
+    if (file.phoneNumber) return
     if (!Disk.exists(this.cachePath)) return
     const matches = this.content.match(/(1-\d\d\d-\d\d\d-\d\d\d\d)/)
     if (matches) file.set("phoneNumber", matches[0])
@@ -138,10 +138,10 @@ class Website {
   }
 }
 
-class WebsiteImporter extends TrueCrawler {
+class WebsiteImporter extends MeasurementsCrawler {
   get matches() {
-    return this.base
-      .filter(file => file.has("website"))
+    return this.concepts
+      .filter(file => file.website)
       .map(file => new Website(file))
   }
 
@@ -151,7 +151,7 @@ class WebsiteImporter extends TrueCrawler {
 
   async updateAllCommand() {
     lodash
-      .shuffle(this.base.filter(file => file.has("website")))
+      .shuffle(this.concepts.filter(file => file.website))
       .forEach(async file => {
         try {
           await new Website(file).update()

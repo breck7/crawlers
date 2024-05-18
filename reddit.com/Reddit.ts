@@ -1,4 +1,4 @@
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 
 const path = require("path")
 const dayjs = require("dayjs")
@@ -11,9 +11,9 @@ Disk.mkdir(cachePath)
 import { getTitle, handTitles } from "./getTitle"
 
 const subredditKeyword = "subreddit"
-const year = "2023"
+const year = "2024"
 
-class RedditImporter extends TrueCrawler {
+class RedditImporter extends MeasurementsCrawler {
   writeToDatabaseCommand() {
     this.matches.forEach(file => {
       try {
@@ -41,7 +41,7 @@ class RedditImporter extends TrueCrawler {
   }
 
   get matches() {
-    return this.base.filter(file => file.has(subredditKeyword))
+    return this.concepts.filter(file => file.has(subredditKeyword))
   }
 
   getSubredditId(file) {
@@ -88,7 +88,7 @@ class RedditImporter extends TrueCrawler {
       const handTitle = getTitle(post)
       if (!handTitle) return
 
-      const hit = this.base.searchForEntity(handTitle)
+      const hit = this.searchForConcept(handTitle)
       if (hit) return
 
       const type = "pl"
@@ -97,9 +97,9 @@ class RedditImporter extends TrueCrawler {
       if (url.includes("github.com")) link = `githubRepo ${url}`
       else if (!url.includes(permalink)) link = `reference ${url}`
 
-      const newFile = this.base.createFile(`title ${handTitle}
-description ${title}
-type ${type}
+      this.createFile(`id ${handTitle}
+conceptDescription ${title}
+tags ${type}
 appeared ${appeared}
 reference https://reddit.com${permalink}
 ${link}

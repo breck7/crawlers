@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { PoliteCrawler, TrueCrawler } from "../TrueCrawler"
+import { PoliteCrawler, MeasurementsCrawler } from "../MeasurementsCrawler"
 const lodash = require("lodash")
 const { Utils } = require("jtree/products/Utils.js")
-const { TrueBaseFile } = require("jtree/products/trueBase.node.js")
+const { ConceptFile } = require("jtree/products/trueBase.node.js")
 
 const cacheDir = __dirname + "/cache/"
 
@@ -21,14 +21,14 @@ const withContext = /(\D{3,18}[12][890]\d\d\D{1,18})/gi
 
 Disk.mkdir(cacheDir)
 
-class TrueBaseFileWithWikipedia {
+class ConceptFileWithWikipedia {
   constructor(file: any) {
     this.file = file
   }
 
   file: any
 
-  get trueBaseId() {
+  get conceptId() {
     return this.file.id
   }
 
@@ -56,14 +56,14 @@ class TrueBaseFileWithWikipedia {
 
   async fetch() {
     if (this.isDownloaded) return 1
-    const { trueBaseId, sourceId } = this
+    const { conceptId, sourceId } = this
     if (!sourceId) return 0
     console.log(`downloading page: '${sourceId}'`)
     let page
     try {
       page = await wiki().page(sourceId)
     } catch (err) {
-      console.error(`Failed download for ${trueBaseId} '${sourceId}'`)
+      console.error(`Failed download for ${conceptId} '${sourceId}'`)
       console.error(err)
       const other = decodeURIComponent(sourceId)
       try {
@@ -94,10 +94,10 @@ class TrueBaseFileWithWikipedia {
     try {
       output.references = await page.references()
     } catch (err) {
-      console.error(`Failed references for ${trueBaseId} ${sourceId}`)
+      console.error(`Failed references for ${conceptId} ${sourceId}`)
     }
     //info = await article.getInfo(page)
-    console.log(`Finished ${trueBaseId}`)
+    console.log(`Finished ${conceptId}`)
 
     Disk.write(this.cachePath, JSON.stringify(output, null, 2))
   }
@@ -188,10 +188,10 @@ class TrueBaseFileWithWikipedia {
   }
 
   get infoBox() {
-    const { trueBaseId, file } = this
+    const { conceptId, file } = this
 
     if (!Disk.exists(this.cachePath)) {
-      //console.log(`Wikipedia file for "${trueBaseId}" not yet downloaded.`)
+      //console.log(`Wikipedia file for "${conceptId}" not yet downloaded.`)
       return 1
     }
     const { object } = this
@@ -199,10 +199,10 @@ class TrueBaseFileWithWikipedia {
   }
 
   writeToDb() {
-    const { trueBaseId, file } = this
+    const { conceptId, file } = this
     try {
       if (!Disk.exists(this.cachePath)) {
-        //console.log(`Wikipedia file for "${trueBaseId}" not yet downloaded.`)
+        //console.log(`Wikipedia file for "${conceptId}" not yet downloaded.`)
         return 1
       }
       const { object } = this
@@ -218,12 +218,12 @@ class TrueBaseFileWithWikipedia {
               .map(name => name.trim())
               .join(" and ")
         if (designer) console.log(designer)
-        if (!file.has("creators")) file.set("creators", designerString)
+        if (!file.creators) file.set("creators", designerString)
       } catch (err) {
-        console.error(`Error with creators for ${trueBaseId}`)
+        console.error(`Error with creators for ${conceptId}`)
       }
 
-      if (!file.has("appeared")) {
+      if (!file.appeared) {
         const year = this.getYear(object)
         if (year) file.set("appeared", year)
       }
@@ -241,38 +241,38 @@ class TrueBaseFileWithWikipedia {
       // this.getPageId(object)
       // this.getDescription(object)
     } catch (err) {
-      console.error(trueBaseId, err)
+      console.error(conceptId, err)
     }
   }
 }
 
-class WikipediaImporter extends TrueCrawler {
+class WikipediaImporter extends MeasurementsCrawler {
   async fetchAllCommand() {
     const crawler = new PoliteCrawler()
     await crawler.fetchAll(
-      this.linkedFiles.map(file => new TrueBaseFileWithWikipedia(file))
+      this.linkedFiles.map(file => new ConceptFileWithWikipedia(file))
     )
   }
 
-  async updateOneCommand(file: typeof TrueBaseFile) {
-    if (!file.has("wikipedia")) return
-    const wp = new TrueBaseFileWithWikipedia(file)
+  async updateOneCommand(file: typeof ConceptFile) {
+    if (!file.wikipedia) return
+    const wp = new ConceptFileWithWikipedia(file)
     await wp.fetch()
     wp.writeToDb()
   }
 
   writeToDatabaseCommand() {
     this.linkedFiles.forEach(file =>
-      new TrueBaseFileWithWikipedia(file).writeToDb()
+      new ConceptFileWithWikipedia(file).writeToDb()
     )
   }
 
   get filesWithWikipediaPages() {
-    return this.linkedFiles.map(file => new TrueBaseFileWithWikipedia(file))
+    return this.linkedFiles.map(file => new ConceptFileWithWikipedia(file))
   }
 
   get linkedFiles() {
-    return this.base.filter(file => file.has("wikipedia"))
+    return this.concepts.filter(file => file.wikipedia)
   }
 }
 
