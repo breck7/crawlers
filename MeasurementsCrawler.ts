@@ -60,7 +60,8 @@ class MeasurementsCrawler {
   }
 
   save(file: parsedConcept, tree: typeof TreeNode) {
-    return Disk.write(this.makeFilePath(file.filename), tree.toString())
+    const dest = this.makeFilePath(file.filename)
+    return Disk.write(dest, tree.toString())
   }
 
   get searchIndex() {

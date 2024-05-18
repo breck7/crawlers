@@ -153,7 +153,7 @@ class ConceptFileWithGitHub {
   }
 
   writeRepoInfoToDatabase() {
-    const { repoFilePath, file, githubNode, tree } = this
+    const { repoFilePath, file, tree } = this
     if (!Disk.exists(repoFilePath)) return this
     const obj = Disk.readJson(repoFilePath)
 
@@ -163,7 +163,7 @@ class ConceptFileWithGitHub {
       this.crawler.setAndSave(this.file, `website`, obj.homepage)
     }
 
-    githubNode.setProperties({
+    tree.getNode("githubRepo").setProperties({
       stars: obj.stargazers_count.toString(),
       forks: obj.forks.toString(),
       subscribers: obj.subscribers_count.toString(),
