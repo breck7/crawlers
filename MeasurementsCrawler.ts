@@ -18,7 +18,9 @@ class MeasurementsCrawler {
     )
   }
 
-  createFile() {}
+  createFile() {
+    // todo
+  }
 
   get searchIndex() {
     if (!this.quickCache.searchIndex)

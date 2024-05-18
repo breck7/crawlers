@@ -78,7 +78,7 @@ class WhoIsImporter extends MeasurementsCrawler {
 
   async updateAllCommand() {
     lodash
-      .shuffle(this.concepts.filter(file => file.has("website")))
+      .shuffle(this.concepts.filter(file => file.website))
       .forEach(async file => this.updateOne(file))
   }
 }

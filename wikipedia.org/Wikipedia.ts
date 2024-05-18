@@ -255,7 +255,7 @@ class WikipediaImporter extends MeasurementsCrawler {
   }
 
   async updateOneCommand(file: typeof ConceptFile) {
-    if (!file.has("wikipedia")) return
+    if (!file.wikipedia) return
     const wp = new ConceptFileWithWikipedia(file)
     await wp.fetch()
     wp.writeToDb()
@@ -272,7 +272,7 @@ class WikipediaImporter extends MeasurementsCrawler {
   }
 
   get linkedFiles() {
-    return this.concepts.filter(file => file.has("wikipedia"))
+    return this.concepts.filter(file => file.wikipedia)
   }
 }
 

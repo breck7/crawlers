@@ -11,7 +11,7 @@ Disk.mkdir(cachePath)
 import { getTitle, handTitles } from "./getTitle"
 
 const subredditKeyword = "subreddit"
-const year = "2023"
+const year = "2024"
 
 class RedditImporter extends MeasurementsCrawler {
   writeToDatabaseCommand() {
