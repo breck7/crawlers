@@ -38,8 +38,9 @@ Disk.mkdir(firstCommitCache)
 Disk.mkdir(repoCountCache)
 
 class ConceptFileWithGitHub {
-  constructor(file: any) {
+  constructor(file: any, crawler: MeasurementsCrawler) {
     this.file = file
+    this.crawler = crawler
   }
 
   get id() {
@@ -47,6 +48,7 @@ class ConceptFileWithGitHub {
   }
 
   file: any
+  crawler: MeasurementsCrawler
 
   get firstCommitResultPath() {
     return firstCommitCache + this.id + ".json"
@@ -101,12 +103,16 @@ class ConceptFileWithGitHub {
     file.prettifyAndSave()
   }
 
+  get tree() {
+    return this.crawler.getTree(this.file)
+  }
+
   get githubNode() {
-    return this.file.githubRepoPath
+    return this.tree.getNode("githubRepo")
   }
 
   get languageNode() {
-    return this.file.githubLanguage
+    return this.tree.getNode("githubLanguage")
   }
 
   get githubRepo() {
@@ -147,13 +153,15 @@ class ConceptFileWithGitHub {
   }
 
   writeRepoInfoToDatabase() {
-    const { repoFilePath, file, githubNode } = this
+    const { repoFilePath, file, githubNode, tree } = this
     if (!Disk.exists(repoFilePath)) return this
     const obj = Disk.readJson(repoFilePath)
 
     if (typeof obj === "string") throw new Error("string:" + obj)
 
-    if (!file.website && obj.homepage) file.set("website", obj.homepage)
+    if (!file.website && obj.homepage) {
+      this.crawler.setAndSave(this.file, `website`, obj.homepage)
+    }
 
     githubNode.setProperties({
       stars: obj.stargazers_count.toString(),
@@ -169,7 +177,7 @@ class ConceptFileWithGitHub {
       // githubHasWiki: obj.hasWiki,
     })
 
-    file.prettifyAndSave()
+    this.crawler.save(file, tree)
     return this
   }
 
@@ -208,8 +216,7 @@ class ConceptFileWithGitHub {
     try {
       const { firstCommit } = this
       const year = dayjs(firstCommit.commit.author.date).format("YYYY")
-      file.set(`githubRepo firstCommit`, year)
-      file.prettifyAndSave()
+      this.crawler.setAndSave(this.file, `githubRepo firstCommit`, year)
     } catch (err) {
       console.error(err)
     }
@@ -227,7 +234,7 @@ class ConceptFileWithGitHub {
   autocompleteCreators() {
     const { file } = this
     try {
-      if (!file.get("creators") && this.firstCommitFetched) {
+      if (!file.creators && this.firstCommitFetched) {
         const { firstCommit } = this
         file.set("creators", firstCommit.commit.author.name)
         file.prettifyAndSave()
@@ -257,7 +264,7 @@ class GitHubImporter extends MeasurementsCrawler {
     await crawler.fetchAll(
       this.linkedFiles
         .filter(file => !file.githubRepo_stars)
-        .map(file => new ConceptFileWithGitHub(file))
+        .map(file => new ConceptFileWithGitHub(file, this))
     )
   }
 
@@ -265,7 +272,7 @@ class GitHubImporter extends MeasurementsCrawler {
     // https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml
     return this.concepts
       .filter(file => file.githubLanguage)
-      .map(file => new ConceptFileWithGitHub(file))
+      .map(file => new ConceptFileWithGitHub(file, this))
       .reverse()
   }
 
@@ -291,7 +298,7 @@ class GitHubImporter extends MeasurementsCrawler {
 
   writeAllRepoDataCommand() {
     this.linkedFiles.forEach(file => {
-      new ConceptFileWithGitHub(file)
+      new ConceptFileWithGitHub(file, this)
         .writeFirstCommitToDatabase()
         .writeRepoInfoToDatabase()
         .autocompleteAppeared()
@@ -391,7 +398,7 @@ class GitHubImporter extends MeasurementsCrawler {
   listOutdatedLangsCommand() {
     const map = this.yamlMap
     this.concepts.forEach(file => {
-      const title = file.get("githubLanguage")
+      const title = file.githubLanguage
       if (title && !map[title])
         console.log(`Outdated: "${file.id}" has "${title}"`)
     })
@@ -409,7 +416,7 @@ class GitHubImporter extends MeasurementsCrawler {
 
   async runAll(file) {
     if (!file.githubRepo) return
-    const gitFile = new ConceptFileWithGitHub(file)
+    const gitFile = new ConceptFileWithGitHub(file, this)
     await gitFile.fetch()
     gitFile
       .writeFirstCommitToDatabase()

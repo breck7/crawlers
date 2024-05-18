@@ -45,6 +45,24 @@ class MeasurementsCrawler {
     return path.join(this.dir, id + ".scroll")
   }
 
+  getTree(file: parsedConcept) {
+    return new TreeNode(Disk.read(this.makeFilePath(file.filename)))
+  }
+
+  setAndSave(
+    file: parsedConcept,
+    measurementPath: string,
+    measurementValue: string
+  ) {
+    const tree = this.getTree(file)
+    tree.set(measurementPath, measurementValue)
+    return this.save(file, tree)
+  }
+
+  save(file: parsedConcept, tree: typeof TreeNode) {
+    return Disk.write(this.makeFilePath(file.filename), tree.toString())
+  }
+
   get searchIndex() {
     if (!this.quickCache.searchIndex)
       this.quickCache.searchIndex = this.makeNameSearchIndex(this.concepts)
