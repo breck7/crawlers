@@ -110,7 +110,7 @@ class ConceptFileWithGitHub {
   }
 
   get githubRepo() {
-    return this.file.githubRepoPath.replace("https://github.com/", "")
+    return this.file.githubRepo.replace("https://github.com/", "")
   }
 
   async fetchTrending() {
@@ -241,7 +241,7 @@ class ConceptFileWithGitHub {
   autocompleteAppeared() {
     const { file } = this
     const year = file.githubRepo_firstCommit
-    if (!file.get("appeared") && year) {
+    if (!file.appeared && year) {
       file.set("appeared", year)
       file.prettifyAndSave()
     }
