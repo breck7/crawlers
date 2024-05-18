@@ -218,7 +218,7 @@ class ConceptFileWithGitHub {
       const year = dayjs(firstCommit.commit.author.date).format("YYYY")
       this.crawler.setAndSave(this.file, `githubRepo firstCommit`, year)
     } catch (err) {
-      console.error(err)
+      console.error(`Failed on ${file.filename}`, err)
     }
     return this
   }
