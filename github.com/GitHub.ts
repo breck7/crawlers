@@ -32,10 +32,6 @@ const downloadJson = async (url, destination) => {
   Disk.writeJson(destination, res.body || res.text || "")
 }
 
-const repoPath = "githubRepo"
-const firstCommitPath = `${repoPath} firstCommit`
-const githubLanguageKey = "githubLanguage"
-
 Disk.mkdir(cacheDir)
 Disk.mkdir(reposDir)
 Disk.mkdir(firstCommitCache)
@@ -46,10 +42,14 @@ class ConceptFileWithGitHub {
     this.file = file
   }
 
+  get id() {
+    return this.file.filename.replace(".scroll", "")
+  }
+
   file: any
 
   get firstCommitResultPath() {
-    return firstCommitCache + this.file.id + ".json"
+    return firstCommitCache + this.id + ".json"
   }
 
   async fetch() {
@@ -102,15 +102,15 @@ class ConceptFileWithGitHub {
   }
 
   get githubNode() {
-    return this.file.getNode(repoPath)
+    return this.file.githubRepoPath
   }
 
   get languageNode() {
-    return this.file.getNode(githubLanguageKey)
+    return this.file.githubLanguage
   }
 
   get githubRepo() {
-    return this.file.get(repoPath).replace("https://github.com/", "")
+    return this.file.githubRepoPath.replace("https://github.com/", "")
   }
 
   async fetchTrending() {
@@ -179,7 +179,7 @@ class ConceptFileWithGitHub {
 
     console.log(`Fetching "${file.id}"`)
 
-    const url = file.get(repoPath)
+    const url = file.githubRepo
     const parts = url.split("/")
     const repoName = parts.pop()
     const owner = parts.pop()
@@ -203,12 +203,12 @@ class ConceptFileWithGitHub {
 
   writeFirstCommitToDatabase() {
     const { file } = this
-    if (file.get(firstCommitPath) || !this.firstCommitFetched) return this
+    if (file.githubRepo_firstCommit || !this.firstCommitFetched) return this
 
     try {
       const { firstCommit } = this
       const year = dayjs(firstCommit.commit.author.date).format("YYYY")
-      file.set(firstCommitPath, year)
+      file.set(`githubRepo firstCommit`, year)
       file.prettifyAndSave()
     } catch (err) {
       console.error(err)
@@ -240,7 +240,7 @@ class ConceptFileWithGitHub {
 
   autocompleteAppeared() {
     const { file } = this
-    const year = file.get(firstCommitPath)
+    const year = file.githubRepo_firstCommit
     if (!file.get("appeared") && year) {
       file.set("appeared", year)
       file.prettifyAndSave()
@@ -256,7 +256,7 @@ class GitHubImporter extends MeasurementsCrawler {
     crawler.maxConcurrent = 2
     await crawler.fetchAll(
       this.linkedFiles
-        .filter(file => !file.getNode("githubRepo").length)
+        .filter(file => !file.githubRepo_stars)
         .map(file => new ConceptFileWithGitHub(file))
     )
   }
@@ -264,7 +264,7 @@ class GitHubImporter extends MeasurementsCrawler {
   get githubOfficiallySupportedLanguages() {
     // https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml
     return this.concepts
-      .filter(file => file[githubLanguageKey])
+      .filter(file => file.githubLanguage)
       .map(file => new ConceptFileWithGitHub(file))
       .reverse()
   }
@@ -404,11 +404,11 @@ class GitHubImporter extends MeasurementsCrawler {
   }
 
   get linkedFiles() {
-    return this.concepts.filter(file => file.has(repoPath))
+    return this.concepts.filter(file => file.githubRepo)
   }
 
   async runAll(file) {
-    if (!file.has(repoPath)) return
+    if (!file.githubRepo) return
     const gitFile = new ConceptFileWithGitHub(file)
     await gitFile.fetch()
     gitFile
