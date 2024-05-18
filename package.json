@@ -1,7 +1,7 @@
 {
-  "name": "truecrawler",
+  "name": "measurementscrawlers",
   "version": "1.0.0",
-  "description": "Crawlers for extracting data from the web for TrueBases.",
+  "description": "Crawlers for extracting measurements from the web for Scroll datasets.",
   "main": "index.js",
   "scripts": {
     "build": "tsc"
@@ -9,7 +9,7 @@
   "prettier": {
     "semi": false
   },
-  "author": "",
+  "author": "Breck Yunits",
   "license": "ISC",
   "dependencies": {
     "awis": "^1.0.10",

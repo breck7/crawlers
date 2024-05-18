@@ -1,4 +1,4 @@
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const lodash = require("lodash")
@@ -9,7 +9,7 @@ const { Disk } = require("jtree/products/Disk.node.js")
 
 const monacoFolder = cacheDir + "monaco-editor/src/basic-languages/"
 
-class MonacoImporter extends TrueCrawler {
+class MonacoImporter extends MeasurementsCrawler {
   extractComments(match) {
     const { file } = match
     const { conf } = require(match.filename)

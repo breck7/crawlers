@@ -1,4 +1,4 @@
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 
 import { parse } from "yaml"
 const { Utils } = require("jtree/products/Utils.js")
@@ -8,11 +8,11 @@ const cachePath = __dirname + "/cache/riju/langs/"
 
 const scopeName = "rijuRepl"
 
-class RijuImporter extends TrueCrawler {
+class RijuImporter extends MeasurementsCrawler {
   writeLinksToDatabaseCommand() {
     this.matches.forEach(match => {
-      match.trueBaseFile.set(scopeName, `https://riju.codes/${match.yaml.id}`)
-      match.trueBaseFile.prettifyAndSave()
+      match.ConceptFile.set(scopeName, `https://riju.codes/${match.yaml.id}`)
+      match.ConceptFile.prettifyAndSave()
     })
   }
 
@@ -27,7 +27,7 @@ class RijuImporter extends TrueCrawler {
         const match = this.base.searchForEntity(id)
         if (match)
           return {
-            trueBaseFile: this.base.getFile(match),
+            ConceptFile: this.base.getFile(match),
             yaml
           }
       })
@@ -54,21 +54,21 @@ type ${type}`,
   }
 
   mergeOne(match) {
-    const { trueBaseFile, yaml } = match
-    const object = trueBaseFile.toObject()
+    const { ConceptFile, yaml } = match
+    const object = ConceptFile.toObject()
     const { info } = yaml
 
-    const node = trueBaseFile.getNode(scopeName)
+    const node = ConceptFile.getNode(scopeName)
 
     if (yaml.template) node.appendLineAndChildren("example", yaml.template)
 
     if (info) {
       if (info.desc) node.set("description", info.desc)
       if (info.year && !object.appeared)
-        trueBaseFile.set("appeared", info.year.toString())
+        ConceptFile.set("appeared", info.year.toString())
 
       if (info.web?.esolang && !object.esolang)
-        trueBaseFile.set("esolang", info.web?.esolang)
+        ConceptFile.set("esolang", info.web?.esolang)
 
       if (info.ext)
         node.set(
@@ -81,7 +81,7 @@ type ${type}`,
       if (info.web.source) node.set("githubRepo", info.web.source)
     }
 
-    trueBaseFile.prettifyAndSave()
+    ConceptFile.prettifyAndSave()
   }
 
   mergeInfoCommand() {

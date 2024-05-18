@@ -1,4 +1,4 @@
-import { PoliteCrawler, TrueCrawler } from "../TrueCrawler"
+import { PoliteCrawler, MeasurementsCrawler } from "../MeasurementsCrawler"
 
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
@@ -41,7 +41,7 @@ Disk.mkdir(reposDir)
 Disk.mkdir(firstCommitCache)
 Disk.mkdir(repoCountCache)
 
-class TrueBaseFileWithGitHub {
+class ConceptFileWithGitHub {
   constructor(file: any) {
     this.file = file
   }
@@ -249,7 +249,7 @@ class TrueBaseFileWithGitHub {
   }
 }
 
-class GitHubImporter extends TrueCrawler {
+class GitHubImporter extends MeasurementsCrawler {
   async fetchAllRepoDataCommand() {
     console.log(`Fetching all...`)
     const crawler = new PoliteCrawler()
@@ -257,7 +257,7 @@ class GitHubImporter extends TrueCrawler {
     await crawler.fetchAll(
       this.linkedFiles
         .filter(file => !file.getNode("githubRepo").length)
-        .map(file => new TrueBaseFileWithGitHub(file))
+        .map(file => new ConceptFileWithGitHub(file))
     )
   }
 
@@ -265,7 +265,7 @@ class GitHubImporter extends TrueCrawler {
     // https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml
     return this.base.topLanguages
       .filter(file => file.has(githubLanguageKey))
-      .map(file => new TrueBaseFileWithGitHub(file))
+      .map(file => new ConceptFileWithGitHub(file))
       .reverse()
   }
 
@@ -291,7 +291,7 @@ class GitHubImporter extends TrueCrawler {
 
   writeAllRepoDataCommand() {
     this.linkedFiles.forEach(file => {
-      new TrueBaseFileWithGitHub(file)
+      new ConceptFileWithGitHub(file)
         .writeFirstCommitToDatabase()
         .writeRepoInfoToDatabase()
         .autocompleteAppeared()
@@ -351,8 +351,8 @@ class GitHubImporter extends TrueCrawler {
 
       if (group) {
         ghNode.set("group", group)
-        // const trueBaseId = this.base.searchForEntity(group)
-        // if (trueBaseId) ghNode.set("groupPldbId", trueBaseId)
+        // const conceptId = this.base.searchForEntity(group)
+        // if (conceptId) ghNode.set("groupPldbId", conceptId)
       }
 
       file.prettifyAndSave()
@@ -409,7 +409,7 @@ class GitHubImporter extends TrueCrawler {
 
   async runAll(file) {
     if (!file.has(repoPath)) return
-    const gitFile = new TrueBaseFileWithGitHub(file)
+    const gitFile = new ConceptFileWithGitHub(file)
     await gitFile.fetch()
     gitFile
       .writeFirstCommitToDatabase()

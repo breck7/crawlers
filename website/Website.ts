@@ -1,6 +1,6 @@
 const cheerio = require("cheerio")
 
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
@@ -138,7 +138,7 @@ class Website {
   }
 }
 
-class WebsiteImporter extends TrueCrawler {
+class WebsiteImporter extends MeasurementsCrawler {
   get matches() {
     return this.base
       .filter(file => file.has("website"))

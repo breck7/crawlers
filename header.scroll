@@ -1,7 +1,7 @@
 importOnly
-git https://github.com/breck7/truecrawler
-email feedback@truecrawler.org
-baseUrl https://truecrawler.org/
+git https://github.com/breck7/measurementscrawlers
+email measurementscrawlers@scroll.pub
+baseUrl https://measurementscrawlers.scroll.pub
 metaTags
 scrollCssTag
 scrollHeader

@@ -1,14 +1,14 @@
 import header.scroll
-title TrueCrawler
+title MeasurementsCrawlers
 
-* This project contains scripts for importing data from the web into TrueBases.
+Crawlers for extracting measurements from the web for Scroll datasets.
 
 * Crawlers generally:
 
-- 1. Match - match entity ids from the source to TrueBase ids
-- 2. Fetch - fetch content from the source site and save to disk cache
-- 3. Parse - parse the content into JSON objects and save to disk cache
-- 4. Update - map the content to the TrueBase grammar and save to the TrueBase
+1. Match - match entity ids from the source to concept ids
+2. Fetch - fetch content from the source site and save to disk cache
+3. Parse - parse the content into JSON objects and save to disk cache
+4. Update - map the content to the measureParser and save to the concept base
 
 permalink index.html
 import footer.scroll

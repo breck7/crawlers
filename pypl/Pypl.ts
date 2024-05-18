@@ -1,4 +1,4 @@
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
@@ -20,7 +20,7 @@ const langPath = path.join(
   "All.js"
 )
 
-class TrueBaseFileWithPypl {
+class ConceptFileWithPypl {
   constructor(file: any, lang) {
     this.file = file
     this.lang = lang
@@ -41,7 +41,7 @@ class TrueBaseFileWithPypl {
   }
 }
 
-class PyplImporter extends TrueCrawler {
+class PyplImporter extends MeasurementsCrawler {
   init() {
     Disk.write(
       langPath,
@@ -107,7 +107,7 @@ class PyplImporter extends TrueCrawler {
 
   writeDataCommand() {
     this.matched.forEach(pair =>
-      new TrueBaseFileWithPypl(pair.file, pair.lang).writeInfo()
+      new ConceptFileWithPypl(pair.file, pair.lang).writeInfo()
     )
   }
 

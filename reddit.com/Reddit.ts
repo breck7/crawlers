@@ -1,4 +1,4 @@
-import { TrueCrawler } from "../TrueCrawler"
+import { MeasurementsCrawler } from "../MeasurementsCrawler"
 
 const path = require("path")
 const dayjs = require("dayjs")
@@ -13,7 +13,7 @@ import { getTitle, handTitles } from "./getTitle"
 const subredditKeyword = "subreddit"
 const year = "2023"
 
-class RedditImporter extends TrueCrawler {
+class RedditImporter extends MeasurementsCrawler {
   writeToDatabaseCommand() {
     this.matches.forEach(file => {
       try {
