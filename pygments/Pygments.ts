@@ -100,8 +100,8 @@ class PygmentsImporter extends MeasurementsCrawler {
         const website = miss.url.includes("github")
           ? `githubRepo ${miss.url}`
           : `website ${miss.url}`
-        const newFile = this.createFile(`title ${miss.name}
-type pl
+        const newFile = this.createFile(`id ${miss.name}
+tags pl
 ${website}`)
         this.writeOne(newFile, miss)
       })

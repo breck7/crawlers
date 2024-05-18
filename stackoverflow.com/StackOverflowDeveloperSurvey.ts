@@ -19,7 +19,6 @@ const processedPath = cachePath + "processed.json"
 class StackOverflowDeveloperSurveyImporter extends MeasurementsCrawler {
   users = {}
   processCsvCommand() {
-    this.concepts.loadFolder()
     fs.createReadStream(filepath)
       .pipe(csv.parse({ headers: true }))
       .on("error", error => console.error(error))
@@ -42,7 +41,6 @@ class StackOverflowDeveloperSurveyImporter extends MeasurementsCrawler {
   }
 
   writeToDatabaseCommand() {
-    this.concepts.loadFolder()
     const objects = JSON.parse(Disk.read(processedPath))
     Object.values(objects).forEach((row: any) => {
       const file = this.getFile(row.conceptId)

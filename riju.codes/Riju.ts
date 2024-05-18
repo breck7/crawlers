@@ -46,8 +46,8 @@ class RijuImporter extends MeasurementsCrawler {
     this.missing.forEach(yaml => {
       const type = yaml.info?.category === "esoteric" ? "esolang" : "pl"
       this.createFile(
-        `title ${yaml.name}
-type ${type}`,
+        `id ${yaml.name}
+tags ${type}`,
         yaml.id
       )
     })

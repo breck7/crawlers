@@ -97,9 +97,9 @@ class RedditImporter extends MeasurementsCrawler {
       if (url.includes("github.com")) link = `githubRepo ${url}`
       else if (!url.includes(permalink)) link = `reference ${url}`
 
-      const newFile = this.createFile(`title ${handTitle}
-description ${title}
-type ${type}
+      const newFile = this.createFile(`id ${handTitle}
+conceptDescription ${title}
+tags ${type}
 appeared ${appeared}
 reference https://reddit.com${permalink}
 ${link}
