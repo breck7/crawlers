@@ -56,7 +56,7 @@ class MeasurementsCrawler {
     files.forEach((parsedConcept: parsedConcept) => {
       const id = parsedConcept.filename.replace(".scroll", "")
       this.makeNames(parsedConcept).forEach(name =>
-        map.set(name.toLowerCase(), filename)
+        map.set(name.toLowerCase(), id)
       )
     })
     return map
