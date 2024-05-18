@@ -51,7 +51,7 @@ class ConceptFileWithGitHub {
   crawler: MeasurementsCrawler
 
   get firstCommitResultPath() {
-    return firstCommitCache + this.id + ".json"
+    return path.join(firstCommitCache, this.id + ".json")
   }
 
   async fetch() {
@@ -201,6 +201,7 @@ class ConceptFileWithGitHub {
       })
 
       console.log(`Success for "${file.id}"`)
+      console.log(commit)
       Disk.write(this.firstCommitResultPath, JSON.stringify(commit, null, 2))
     } catch (err) {
       console.log(err)
