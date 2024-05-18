@@ -1,16 +1,19 @@
 const lodash = require("lodash")
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
+const { Disk } = require("jtree/products/Disk.node.js")
 
-export declare type parsedConcept = Object
+export declare type parsedConcept = any
 
 class MeasurementsCrawler {
-  constructor(concepts: parsedConcept[]) {
+  constructor(concepts: parsedConcept[], dir: string) {
     this.concepts = concepts
     this.quickCache = {}
+    this.dir
   }
   quickCache: any
   concepts: parsedConcept[]
+  dir: string
 
   getFile(id: string) {
     return this.concepts.find(
@@ -18,8 +21,27 @@ class MeasurementsCrawler {
     )
   }
 
-  createFile() {
-    // todo
+  makeId(title: string) {
+    let id = Utils.titleToPermalink(title)
+    let newId = id
+    if (!this.getFile(newId)) return newId
+
+    throw new Error("Duplicate id: " + id)
+  }
+
+  createFile(content: string, id?: string) {
+    if (id === undefined) {
+      const title = new TreeNode(content).get("id")
+      if (!title) throw new Error("title required for " + content)
+
+      id = this.makeId(title)
+    }
+    Disk.write(this.makeFilePath(id), content)
+    return this.appendLineAndChildren(id, content)
+  }
+
+  makeFilePath(id: string) {
+    return path.join(this.dir, id + ".scroll")
   }
 
   get searchIndex() {
@@ -28,23 +50,22 @@ class MeasurementsCrawler {
     return this.quickCache.searchIndex
   }
 
-  makeNameSearchIndex(files: TreeNode[]) {
+  makeNameSearchIndex(files: any[]) {
     const map = new Map<string, TreeNode>()
-    files.forEach((file: TreeNode) => {
+    files.forEach((file: any) => {
       const { id } = file
-      file.names.forEach(name => map.set(name.toLowerCase(), id))
+      this.makeNames(item).forEach(name => map.set(name.toLowerCase(), id))
     })
     return map
   }
 
-  get names() {
+  makeNames(item) {
     return [
-      this.id,
-      this.title,
-      this.get("standsFor"),
-      this.get("githubLanguage"),
-      this.wikipediaTitle,
-      ...this.getAll("aka")
+      item.id,
+      item.standsFor,
+      item.githubLanguage,
+      item.wikipediaTitle,
+      item.aka
     ].filter(i => i)
   }
 
