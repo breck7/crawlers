@@ -10,7 +10,7 @@ class MeasurementsCrawler {
   constructor(concepts: parsedConcept[], dir: string) {
     this.concepts = concepts
     this.quickCache = {}
-    this.dir
+    this.dir = dir
   }
   quickCache: any
   concepts: parsedConcept[]
@@ -42,7 +42,26 @@ class MeasurementsCrawler {
   }
 
   makeFilePath(id: string) {
-    return path.join(this.dir, id + ".scroll")
+    return path.join(this.dir, id.replace(".scroll", "") + ".scroll")
+  }
+
+  getTree(file: parsedConcept) {
+    return new TreeNode(Disk.read(this.makeFilePath(file.filename)))
+  }
+
+  setAndSave(
+    file: parsedConcept,
+    measurementPath: string,
+    measurementValue: string
+  ) {
+    const tree = this.getTree(file)
+    tree.set(measurementPath, measurementValue)
+    return this.save(file, tree)
+  }
+
+  save(file: parsedConcept, tree: typeof TreeNode) {
+    const dest = this.makeFilePath(file.filename)
+    return Disk.write(dest, tree.toString())
   }
 
   get searchIndex() {

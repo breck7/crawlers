@@ -32,24 +32,26 @@ const downloadJson = async (url, destination) => {
   Disk.writeJson(destination, res.body || res.text || "")
 }
 
-const repoPath = "githubRepo"
-const firstCommitPath = `${repoPath} firstCommit`
-const githubLanguageKey = "githubLanguage"
-
 Disk.mkdir(cacheDir)
 Disk.mkdir(reposDir)
 Disk.mkdir(firstCommitCache)
 Disk.mkdir(repoCountCache)
 
 class ConceptFileWithGitHub {
-  constructor(file: any) {
+  constructor(file: any, crawler: MeasurementsCrawler) {
     this.file = file
+    this.crawler = crawler
+  }
+
+  get id() {
+    return this.file.filename.replace(".scroll", "")
   }
 
   file: any
+  crawler: MeasurementsCrawler
 
   get firstCommitResultPath() {
-    return firstCommitCache + this.file.id + ".json"
+    return path.join(firstCommitCache, this.id + ".json")
   }
 
   async fetch() {
@@ -101,16 +103,20 @@ class ConceptFileWithGitHub {
     file.prettifyAndSave()
   }
 
+  get tree() {
+    return this.crawler.getTree(this.file)
+  }
+
   get githubNode() {
-    return this.file.getNode(repoPath)
+    return this.tree.getNode("githubRepo")
   }
 
   get languageNode() {
-    return this.file.getNode(githubLanguageKey)
+    return this.tree.getNode("githubLanguage")
   }
 
   get githubRepo() {
-    return this.file.get(repoPath).replace("https://github.com/", "")
+    return this.file.githubRepo.replace("https://github.com/", "")
   }
 
   async fetchTrending() {
@@ -147,15 +153,17 @@ class ConceptFileWithGitHub {
   }
 
   writeRepoInfoToDatabase() {
-    const { repoFilePath, file, githubNode } = this
+    const { repoFilePath, file, tree } = this
     if (!Disk.exists(repoFilePath)) return this
     const obj = Disk.readJson(repoFilePath)
 
     if (typeof obj === "string") throw new Error("string:" + obj)
 
-    if (!file.website && obj.homepage) file.set("website", obj.homepage)
+    if (!file.website && obj.homepage) {
+      this.crawler.setAndSave(this.file, `website`, obj.homepage)
+    }
 
-    githubNode.setProperties({
+    tree.getNode("githubRepo").setProperties({
       stars: obj.stargazers_count.toString(),
       forks: obj.forks.toString(),
       subscribers: obj.subscribers_count.toString(),
@@ -169,7 +177,7 @@ class ConceptFileWithGitHub {
       // githubHasWiki: obj.hasWiki,
     })
 
-    file.prettifyAndSave()
+    this.crawler.save(file, tree)
     return this
   }
 
@@ -179,7 +187,7 @@ class ConceptFileWithGitHub {
 
     console.log(`Fetching "${file.id}"`)
 
-    const url = file.get(repoPath)
+    const url = file.githubRepo
     const parts = url.split("/")
     const repoName = parts.pop()
     const owner = parts.pop()
@@ -193,6 +201,7 @@ class ConceptFileWithGitHub {
       })
 
       console.log(`Success for "${file.id}"`)
+      console.log(commit)
       Disk.write(this.firstCommitResultPath, JSON.stringify(commit, null, 2))
     } catch (err) {
       console.log(err)
@@ -203,15 +212,14 @@ class ConceptFileWithGitHub {
 
   writeFirstCommitToDatabase() {
     const { file } = this
-    if (file.get(firstCommitPath) || !this.firstCommitFetched) return this
+    if (file.githubRepo_firstCommit || !this.firstCommitFetched) return this
 
     try {
       const { firstCommit } = this
       const year = dayjs(firstCommit.commit.author.date).format("YYYY")
-      file.set(firstCommitPath, year)
-      file.prettifyAndSave()
+      this.crawler.setAndSave(this.file, `githubRepo firstCommit`, year)
     } catch (err) {
-      console.error(err)
+      console.error(`Failed on ${file.filename}`, err)
     }
     return this
   }
@@ -227,7 +235,7 @@ class ConceptFileWithGitHub {
   autocompleteCreators() {
     const { file } = this
     try {
-      if (!file.get("creators") && this.firstCommitFetched) {
+      if (!file.creators && this.firstCommitFetched) {
         const { firstCommit } = this
         file.set("creators", firstCommit.commit.author.name)
         file.prettifyAndSave()
@@ -240,8 +248,8 @@ class ConceptFileWithGitHub {
 
   autocompleteAppeared() {
     const { file } = this
-    const year = file.get(firstCommitPath)
-    if (!file.get("appeared") && year) {
+    const year = file.githubRepo_firstCommit
+    if (!file.appeared && year) {
       file.set("appeared", year)
       file.prettifyAndSave()
     }
@@ -256,16 +264,16 @@ class GitHubImporter extends MeasurementsCrawler {
     crawler.maxConcurrent = 2
     await crawler.fetchAll(
       this.linkedFiles
-        .filter(file => !file.getNode("githubRepo").length)
-        .map(file => new ConceptFileWithGitHub(file))
+        .filter(file => !file.githubRepo_stars)
+        .map(file => new ConceptFileWithGitHub(file, this))
     )
   }
 
   get githubOfficiallySupportedLanguages() {
     // https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml
     return this.concepts
-      .filter(file => file[githubLanguageKey])
-      .map(file => new ConceptFileWithGitHub(file))
+      .filter(file => file.githubLanguage)
+      .map(file => new ConceptFileWithGitHub(file, this))
       .reverse()
   }
 
@@ -291,7 +299,7 @@ class GitHubImporter extends MeasurementsCrawler {
 
   writeAllRepoDataCommand() {
     this.linkedFiles.forEach(file => {
-      new ConceptFileWithGitHub(file)
+      new ConceptFileWithGitHub(file, this)
         .writeFirstCommitToDatabase()
         .writeRepoInfoToDatabase()
         .autocompleteAppeared()
@@ -391,7 +399,7 @@ class GitHubImporter extends MeasurementsCrawler {
   listOutdatedLangsCommand() {
     const map = this.yamlMap
     this.concepts.forEach(file => {
-      const title = file.get("githubLanguage")
+      const title = file.githubLanguage
       if (title && !map[title])
         console.log(`Outdated: "${file.id}" has "${title}"`)
     })
@@ -404,12 +412,12 @@ class GitHubImporter extends MeasurementsCrawler {
   }
 
   get linkedFiles() {
-    return this.concepts.filter(file => file.has(repoPath))
+    return this.concepts.filter(file => file.githubRepo)
   }
 
   async runAll(file) {
-    if (!file.has(repoPath)) return
-    const gitFile = new ConceptFileWithGitHub(file)
+    if (!file.githubRepo) return
+    const gitFile = new ConceptFileWithGitHub(file, this)
     await gitFile.fetch()
     gitFile
       .writeFirstCommitToDatabase()
