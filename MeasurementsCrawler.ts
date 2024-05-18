@@ -2,6 +2,7 @@ const lodash = require("lodash")
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const { Utils } = require("jtree/products/Utils.js")
 const { Disk } = require("jtree/products/Disk.node.js")
+const path = require("path")
 
 export declare type parsedConcept = any
 
@@ -15,9 +16,9 @@ class MeasurementsCrawler {
   concepts: parsedConcept[]
   dir: string
 
-  getFile(id: string) {
+  getFile(filename: string) {
     return this.concepts.find(
-      concept => concept.get("filename") === id + ".scroll"
+      concept => concept.filename === filename + ".scroll"
     )
   }
 
@@ -37,7 +38,7 @@ class MeasurementsCrawler {
       id = this.makeId(title)
     }
     Disk.write(this.makeFilePath(id), content)
-    return this.appendLineAndChildren(id, content)
+    return new TreeNode(content)
   }
 
   makeFilePath(id: string) {
@@ -50,22 +51,25 @@ class MeasurementsCrawler {
     return this.quickCache.searchIndex
   }
 
-  makeNameSearchIndex(files: any[]) {
-    const map = new Map<string, TreeNode>()
-    files.forEach((file: any) => {
-      const { id } = file
-      this.makeNames(item).forEach(name => map.set(name.toLowerCase(), id))
+  makeNameSearchIndex(files: parsedConcept[]) {
+    const map = new Map<string, parsedConcept>()
+    files.forEach((parsedConcept: parsedConcept) => {
+      const id = parsedConcept.filename.replace(".scroll", "")
+      this.makeNames(parsedConcept).forEach(name =>
+        map.set(name.toLowerCase(), filename)
+      )
     })
     return map
   }
 
-  makeNames(item) {
+  makeNames(concept: parsedConcept) {
     return [
-      item.id,
-      item.standsFor,
-      item.githubLanguage,
-      item.wikipediaTitle,
-      item.aka
+      concept.filename.replace(".scroll", ""),
+      concept.id,
+      concept.standsFor,
+      concept.githubLanguage,
+      concept.wikipediaTitle,
+      concept.aka
     ].filter(i => i)
   }
 
