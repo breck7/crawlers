@@ -73,12 +73,12 @@ class WhoIsImporter extends MeasurementsCrawler {
   }
 
   async updateOneCommand(id) {
-    this.updateOne(this.base.getFile(id))
+    this.updateOne(this.getFile(id))
   }
 
   async updateAllCommand() {
     lodash
-      .shuffle(this.base.filter(file => file.has("website")))
+      .shuffle(this.concepts.filter(file => file.has("website")))
       .forEach(async file => this.updateOne(file))
   }
 }

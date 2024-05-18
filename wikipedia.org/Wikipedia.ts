@@ -272,7 +272,7 @@ class WikipediaImporter extends MeasurementsCrawler {
   }
 
   get linkedFiles() {
-    return this.base.filter(file => file.has("wikipedia"))
+    return this.concepts.filter(file => file.has("wikipedia"))
   }
 }
 

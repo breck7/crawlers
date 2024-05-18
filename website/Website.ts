@@ -140,7 +140,7 @@ class Website {
 
 class WebsiteImporter extends MeasurementsCrawler {
   get matches() {
-    return this.base
+    return this.concepts
       .filter(file => file.has("website"))
       .map(file => new Website(file))
   }
@@ -151,7 +151,7 @@ class WebsiteImporter extends MeasurementsCrawler {
 
   async updateAllCommand() {
     lodash
-      .shuffle(this.base.filter(file => file.has("website")))
+      .shuffle(this.concepts.filter(file => file.has("website")))
       .forEach(async file => {
         try {
           await new Website(file).update()

@@ -263,8 +263,8 @@ class GitHubImporter extends MeasurementsCrawler {
 
   get githubOfficiallySupportedLanguages() {
     // https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml
-    return this.base.topLanguages
-      .filter(file => file.has(githubLanguageKey))
+    return this.concepts
+      .filter(file => file[githubLanguageKey])
       .map(file => new ConceptFileWithGitHub(file))
       .reverse()
   }
@@ -351,7 +351,7 @@ class GitHubImporter extends MeasurementsCrawler {
 
       if (group) {
         ghNode.set("group", group)
-        // const conceptId = this.base.searchForEntity(group)
+        // const conceptId = this.searchForConcept(group)
         // if (conceptId) ghNode.set("groupPldbId", conceptId)
       }
 
@@ -373,8 +373,8 @@ class GitHubImporter extends MeasurementsCrawler {
 
   get pairs() {
     return this.langs.map(lang => {
-      const id = this.base.searchForEntity(lang.title)
-      return { file: this.base.getFile(id), lang }
+      const id = this.searchForConcept(lang.title)
+      return { file: this.getFile(id), lang }
     })
   }
 
@@ -390,7 +390,7 @@ class GitHubImporter extends MeasurementsCrawler {
 
   listOutdatedLangsCommand() {
     const map = this.yamlMap
-    this.base.forEach(file => {
+    this.concepts.forEach(file => {
       const title = file.get("githubLanguage")
       if (title && !map[title])
         console.log(`Outdated: "${file.id}" has "${title}"`)
@@ -404,7 +404,7 @@ class GitHubImporter extends MeasurementsCrawler {
   }
 
   get linkedFiles() {
-    return this.base.filter(file => file.has(repoPath))
+    return this.concepts.filter(file => file.has(repoPath))
   }
 
   async runAll(file) {

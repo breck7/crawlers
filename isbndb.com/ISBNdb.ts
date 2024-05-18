@@ -132,7 +132,7 @@ class ISBNdbImporter extends MeasurementsCrawler {
   }
 
   get files() {
-    return this.base.topLanguages.map(file => new ConceptFileForBooks(file))
+    return this.concepts.map(file => new ConceptFileForBooks(file))
   }
 
   get unfetched() {

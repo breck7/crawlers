@@ -94,8 +94,8 @@ class MonacoImporter extends MeasurementsCrawler {
   get paired() {
     return Disk.getFolders(monacoFolder).map(path => {
       const name = Disk.getFileName(path)
-      const matched = this.base.searchForEntity(name)
-      const file = matched ? this.base.getFile(matched) : undefined
+      const matched = this.searchForConcept(name)
+      const file = matched ? this.getFile(matched) : undefined
       const filename = path + "/" + name + ".js"
       return {
         path,

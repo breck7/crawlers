@@ -144,9 +144,7 @@ class SemanticScholarImporter extends MeasurementsCrawler {
   }
 
   get files() {
-    return this.base.topLanguages.map(
-      file => new ConceptFileForSemanticScholar(file)
-    )
+    return this.concepts.map(file => new ConceptFileForSemanticScholar(file))
   }
 
   get unfetched() {

@@ -93,11 +93,11 @@ class AwisFile {
 
 class AwisImporter extends MeasurementsCrawler {
   writeAllCommand() {
-    this.base.forEach(file => new AwisFile(file).write())
+    this.concepts.forEach(file => new AwisFile(file).write())
   }
 
   async downloadAllCommand() {
-    await Promise.all(this.base.map(file => new AwisFile(file).download()))
+    await Promise.all(this.concepts.map(file => new AwisFile(file).download()))
   }
 }
 

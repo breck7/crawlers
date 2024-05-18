@@ -1,11 +1,80 @@
 const lodash = require("lodash")
 const { TreeNode } = require("jtree/products/TreeNode.js")
+const { Utils } = require("jtree/products/Utils.js")
+
+export declare type parsedConcept = Object
 
 class MeasurementsCrawler {
-  constructor(concepts: TreeNode[]) {
-    this.base = concepts
+  constructor(concepts: parsedConcept[]) {
+    this.concepts = concepts
+    this.quickCache = {}
   }
-  base: TreeNode[]
+  quickCache: any
+  concepts: parsedConcept[]
+
+  getFile(id: string) {
+    return this.concepts.find(
+      concept => concept.get("filename") === id + ".scroll"
+    )
+  }
+
+  createFile() {}
+
+  get searchIndex() {
+    if (!this.quickCache.searchIndex)
+      this.quickCache.searchIndex = this.makeNameSearchIndex(this.concepts)
+    return this.quickCache.searchIndex
+  }
+
+  makeNameSearchIndex(files: TreeNode[]) {
+    const map = new Map<string, TreeNode>()
+    files.forEach((file: TreeNode) => {
+      const { id } = file
+      file.names.forEach(name => map.set(name.toLowerCase(), id))
+    })
+    return map
+  }
+
+  get names() {
+    return [
+      this.id,
+      this.title,
+      this.get("standsFor"),
+      this.get("githubLanguage"),
+      this.wikipediaTitle,
+      ...this.getAll("aka")
+    ].filter(i => i)
+  }
+
+  // Specific for PLDB:
+  searchForConcept(query: string) {
+    if (query === undefined || query === "") return
+    const { searchIndex } = this
+    return (
+      searchIndex.get(query) ||
+      searchIndex.get(query.toLowerCase()) ||
+      searchIndex.get(Utils.titleToPermalink(query))
+    )
+  }
+
+  searchForConceptByFileExtensions(extensions = []) {
+    const { extensionsMap } = this
+    const hit = extensions.find(ext => extensionsMap.has(ext))
+    return extensionsMap.get(hit)
+  }
+
+  get extensionsMap() {
+    if (this.quickCache.extensionsMap) return this.quickCache.extensionsMap
+    this.quickCache.extensionsMap = new Map()
+    const extensionsMap = this.quickCache.extensionsMap
+    this.concepts.forEach(concept =>
+      concept.extensions
+        .split(" ")
+        .forEach(ext => extensionsMap.set(ext, concept.id))
+    )
+
+    return extensionsMap
+  }
 }
 
 interface PoliteCrawlerJob {

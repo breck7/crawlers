@@ -77,10 +77,10 @@ class PygmentsImporter extends MeasurementsCrawler {
       entry.extensions = entry.filenames.map(ext => ext.replace("*.", ""))
       entry.filename = entry.filename.split("/").pop()
       entry.conceptId =
-        this.base.searchForEntity(entry.name) ||
-        this.base.searchForEntityByFileExtensions(entry.extensions)
+        this.searchForConcept(entry.name) ||
+        this.searchForConceptByFileExtensions(entry.extensions)
 
-      if (entry.conceptId) entry.file = this.base.getFile(entry.conceptId)
+      if (entry.conceptId) entry.file = this.getFile(entry.conceptId)
       return entry
     })
   }
@@ -100,7 +100,7 @@ class PygmentsImporter extends MeasurementsCrawler {
         const website = miss.url.includes("github")
           ? `githubRepo ${miss.url}`
           : `website ${miss.url}`
-        const newFile = this.base.createFile(`title ${miss.name}
+        const newFile = this.createFile(`title ${miss.name}
 type pl
 ${website}`)
         this.writeOne(newFile, miss)

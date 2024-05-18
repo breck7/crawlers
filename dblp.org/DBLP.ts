@@ -83,7 +83,7 @@ class DBLPImporter extends MeasurementsCrawler {
   }
 
   get matches() {
-    const files = this.base.filter(file => file.isLanguage)
+    const files = this.concepts.filter(file => file.isLanguage)
 
     const sorted = lodash.sortBy(files, file => file.rank)
 

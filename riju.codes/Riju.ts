@@ -24,10 +24,10 @@ class RijuImporter extends MeasurementsCrawler {
     return this.yamlFiles
       .map(yaml => {
         const { id } = yaml
-        const match = this.base.searchForEntity(id)
+        const match = this.searchForConcept(id)
         if (match)
           return {
-            ConceptFile: this.base.getFile(match),
+            ConceptFile: this.getFile(match),
             yaml
           }
       })
@@ -39,13 +39,13 @@ class RijuImporter extends MeasurementsCrawler {
   }
 
   get missing() {
-    return this.yamlFiles.filter(yaml => !this.base.searchForEntity(yaml.id))
+    return this.yamlFiles.filter(yaml => !this.searchForConcept(yaml.id))
   }
 
   addMissingCommand() {
     this.missing.forEach(yaml => {
       const type = yaml.info?.category === "esoteric" ? "esolang" : "pl"
-      this.base.createFile(
+      this.createFile(
         `title ${yaml.name}
 type ${type}`,
         yaml.id

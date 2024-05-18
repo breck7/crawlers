@@ -41,7 +41,7 @@ class RedditImporter extends MeasurementsCrawler {
   }
 
   get matches() {
-    return this.base.filter(file => file.has(subredditKeyword))
+    return this.concepts.filter(file => file.has(subredditKeyword))
   }
 
   getSubredditId(file) {
@@ -88,7 +88,7 @@ class RedditImporter extends MeasurementsCrawler {
       const handTitle = getTitle(post)
       if (!handTitle) return
 
-      const hit = this.base.searchForEntity(handTitle)
+      const hit = this.searchForConcept(handTitle)
       if (hit) return
 
       const type = "pl"
@@ -97,7 +97,7 @@ class RedditImporter extends MeasurementsCrawler {
       if (url.includes("github.com")) link = `githubRepo ${url}`
       else if (!url.includes(permalink)) link = `reference ${url}`
 
-      const newFile = this.base.createFile(`title ${handTitle}
+      const newFile = this.createFile(`title ${handTitle}
 description ${title}
 type ${type}
 appeared ${appeared}

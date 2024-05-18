@@ -17,8 +17,8 @@ const outputPath = path.join(cacheDir, "gh.csv")
 class BigQueryImporter extends MeasurementsCrawler {
   get pairs() {
     return this.table.map(row => {
-      const id = this.base.searchForEntity(row.language)
-      return { file: this.base.getFile(id), row }
+      const id = this.searchForConcept(row.language)
+      return { file: this.getFile(id), row }
     })
   }
 

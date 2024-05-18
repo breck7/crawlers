@@ -90,8 +90,8 @@ class CompilerExplorerImporter extends MeasurementsCrawler {
 
   get pairs() {
     return Object.values(this.languages).map((lang: any) => {
-      const id = this.base.searchForEntity(lang.name)
-      return { file: this.base.getFile(id), lang }
+      const id = this.searchForConcept(lang.name)
+      return { file: this.getFile(id), lang }
     })
   }
 

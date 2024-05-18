@@ -77,11 +77,11 @@ code
   get matched() {
     return this.parsed
       .map(node => {
-        const hit = this.base.searchForEntity(node.get("name"))
+        const hit = this.searchForConcept(node.get("name"))
         if (!hit) return false
 
         return {
-          file: this.base.getFile(hit),
+          file: this.getFile(hit),
           hit: node
         }
       })
