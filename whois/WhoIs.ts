@@ -56,7 +56,7 @@ class WhoIsImporter extends MeasurementsCrawler {
 
     year = year.match(/(198\d|199\d|200\d|201\d|202\d)/)[1]
     file.set("domainName registered", year)
-    //if (!file.has("appeared")) file.set("appeared", year)
+    //if (!file.appeared) file.set("appeared", year)
     file.prettifyAndSave()
   }
 

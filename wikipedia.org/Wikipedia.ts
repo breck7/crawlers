@@ -218,12 +218,12 @@ class ConceptFileWithWikipedia {
               .map(name => name.trim())
               .join(" and ")
         if (designer) console.log(designer)
-        if (!file.has("creators")) file.set("creators", designerString)
+        if (!file.creators) file.set("creators", designerString)
       } catch (err) {
         console.error(`Error with creators for ${conceptId}`)
       }
 
-      if (!file.has("appeared")) {
+      if (!file.appeared) {
         const year = this.getYear(object)
         if (year) file.set("appeared", year)
       }

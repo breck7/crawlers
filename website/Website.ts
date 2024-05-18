@@ -21,7 +21,7 @@ class Website {
 
   async update() {
     const { file } = this
-    if (!file.has("website")) return this
+    if (!file.website) return this
     await this.download()
 
     if (!Disk.exists(this.cachePath)) return
@@ -67,7 +67,7 @@ class Website {
 
   extractGitHub() {
     const { file } = this
-    if (file.has("githubRepo")) return this
+    if (file.githubRepo) return this
 
     let potentialHits = Utils.getLinks(this.content.toLowerCase()).filter(
       link => {
@@ -99,7 +99,7 @@ class Website {
 
   extractPhoneNumber() {
     const { file } = this
-    if (file.has("phoneNumber")) return
+    if (file.phoneNumber) return
     if (!Disk.exists(this.cachePath)) return
     const matches = this.content.match(/(1-\d\d\d-\d\d\d-\d\d\d\d)/)
     if (matches) file.set("phoneNumber", matches[0])

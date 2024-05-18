@@ -36,7 +36,7 @@ class MonacoImporter extends MeasurementsCrawler {
     const { file } = match
     try {
       const { language } = require(match.filename)
-      if (language.keywords && !file.has("keywords"))
+      if (language.keywords && !file.keywords)
         file.set("keywords", language.keywords.join(" "))
     } catch (err) {
       console.error(`Error with keywords with ${file.id}`)

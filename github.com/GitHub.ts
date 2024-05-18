@@ -153,7 +153,7 @@ class ConceptFileWithGitHub {
 
     if (typeof obj === "string") throw new Error("string:" + obj)
 
-    if (!file.has("website") && obj.homepage) file.set("website", obj.homepage)
+    if (!file.website && obj.homepage) file.set("website", obj.homepage)
 
     githubNode.setProperties({
       stars: obj.stargazers_count.toString(),

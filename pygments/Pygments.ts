@@ -20,8 +20,8 @@ class PygmentsImporter extends MeasurementsCrawler {
   }
 
   extractData(file, entry) {
-    if (!file.has("pygmentsHighlighter")) return
-    if (!file.has("keywords") && entry.keywords.length)
+    if (!file.pygmentsHighlighter) return
+    if (!file.keywords && entry.keywords.length)
       file.set("keywords", entry.keywords.join(" "))
 
     const nums = [
@@ -58,7 +58,7 @@ class PygmentsImporter extends MeasurementsCrawler {
   }
 
   writeOne(file, entry) {
-    if (file.has("pygmentsHighlighter")) return
+    if (file.pygmentsHighlighter) return
 
     file.set("pygmentsHighlighter", entry.name)
     file.set("pygmentsHighlighter filename", entry.filename)
