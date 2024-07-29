@@ -1,4 +1,4 @@
-const MeasurementsCrawler = require("../MeasurementsCrawler")
+const PoliteCrawler = require("../PoliteCrawler.js")
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const superagent = require("superagent")
@@ -216,10 +216,14 @@ class ConceptFileWithGitHub {
     return this
   }
 }
-class GitHubImporter extends MeasurementsCrawler.MeasurementsCrawler {
+class GitHubImporter {
+  constructor(scrollset) {
+    this.scrollset = scrollset
+  }
+
   async fetchAllRepoDataCommand() {
     console.log(`Fetching all...`)
-    const crawler = new MeasurementsCrawler.PoliteCrawler()
+    const crawler = new PoliteCrawler()
     crawler.maxConcurrent = 2
     await crawler.fetchAll(
       this.linkedFiles
@@ -229,7 +233,7 @@ class GitHubImporter extends MeasurementsCrawler.MeasurementsCrawler {
   }
   get githubOfficiallySupportedLanguages() {
     // https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml
-    return this.concepts
+    return this.scrollset.concepts
       .filter(file => file.githubLanguage)
       .map(file => new ConceptFileWithGitHub(file, this))
       .reverse()
@@ -239,7 +243,7 @@ class GitHubImporter extends MeasurementsCrawler.MeasurementsCrawler {
     console.log(
       `Fetching repo counts for all ${githubOfficiallySupportedLanguages.length} languages supported by GitHub...`
     )
-    const crawler = new MeasurementsCrawler.PoliteCrawler()
+    const crawler = new PoliteCrawler()
     crawler.maxConcurrent = 1
     crawler.msDelayBetweenRequests = 100
     await crawler.fetchAll(
@@ -338,7 +342,7 @@ class GitHubImporter extends MeasurementsCrawler.MeasurementsCrawler {
   }
   listOutdatedLangsCommand() {
     const map = this.yamlMap
-    this.concepts.forEach(file => {
+    this.scrollset.concepts.forEach(file => {
       const title = file.githubLanguage
       if (title && !map[title])
         console.log(`Outdated: "${file.id}" has "${title}"`)
@@ -350,7 +354,7 @@ class GitHubImporter extends MeasurementsCrawler.MeasurementsCrawler {
     console.log(`Wrote ${this.unmatched.length} missing to: ${missingPath}`)
   }
   get linkedFiles() {
-    return this.concepts.filter(file => file.githubRepo)
+    return this.scrollset.concepts.filter(file => file.githubRepo)
   }
   async runAll(file) {
     if (!file.githubRepo) return
