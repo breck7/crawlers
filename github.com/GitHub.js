@@ -228,14 +228,14 @@ class GitHubImporter {
     await crawler.fetchAll(
       this.linkedFiles
         .filter(file => !file.githubRepo_stars)
-        .map(file => new ConceptFileWithGitHub(file, this))
+        .map(file => new ConceptFileWithGitHub(file, this.scrollset))
     )
   }
   get githubOfficiallySupportedLanguages() {
     // https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml
     return this.scrollset.concepts
       .filter(file => file.githubLanguage)
-      .map(file => new ConceptFileWithGitHub(file, this))
+      .map(file => new ConceptFileWithGitHub(file, this.scrollset))
       .reverse()
   }
   async fetchAllRepoCountsCommand() {
@@ -258,7 +258,7 @@ class GitHubImporter {
   }
   writeAllRepoDataCommand() {
     this.linkedFiles.forEach(file => {
-      new ConceptFileWithGitHub(file, this)
+      new ConceptFileWithGitHub(file, this.scrollset)
         .writeFirstCommitToDatabase()
         .writeRepoInfoToDatabase()
         .autocompleteAppeared()
@@ -358,7 +358,7 @@ class GitHubImporter {
   }
   async runAll(file) {
     if (!file.githubRepo) return
-    const gitFile = new ConceptFileWithGitHub(file, this)
+    const gitFile = new ConceptFileWithGitHub(file, this.scrollset)
     await gitFile.fetch()
     gitFile
       .writeFirstCommitToDatabase()
