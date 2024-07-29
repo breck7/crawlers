@@ -1,7 +1,4 @@
-"use strict"
-Object.defineProperty(exports, "__esModule", { value: true })
-exports.GitHubImporter = void 0
-const MeasurementsCrawler_1 = require("../MeasurementsCrawler")
+const MeasurementsCrawler = require("../MeasurementsCrawler")
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const superagent = require("superagent")
@@ -40,7 +37,7 @@ class ConceptFileWithGitHub {
     this.crawler = crawler
   }
   get id() {
-    return this.file.filename.replace(".scroll", "")
+    return this.file.id
   }
   get firstCommitResultPath() {
     return path.join(firstCommitCache, this.id + ".json")
@@ -219,10 +216,10 @@ class ConceptFileWithGitHub {
     return this
   }
 }
-class GitHubImporter extends MeasurementsCrawler_1.MeasurementsCrawler {
+class GitHubImporter extends MeasurementsCrawler.MeasurementsCrawler {
   async fetchAllRepoDataCommand() {
     console.log(`Fetching all...`)
-    const crawler = new MeasurementsCrawler_1.PoliteCrawler()
+    const crawler = new MeasurementsCrawler.PoliteCrawler()
     crawler.maxConcurrent = 2
     await crawler.fetchAll(
       this.linkedFiles
@@ -242,7 +239,7 @@ class GitHubImporter extends MeasurementsCrawler_1.MeasurementsCrawler {
     console.log(
       `Fetching repo counts for all ${githubOfficiallySupportedLanguages.length} languages supported by GitHub...`
     )
-    const crawler = new MeasurementsCrawler_1.PoliteCrawler()
+    const crawler = new MeasurementsCrawler.PoliteCrawler()
     crawler.maxConcurrent = 1
     crawler.msDelayBetweenRequests = 100
     await crawler.fetchAll(
