@@ -38,4 +38,4 @@ class PoliteCrawler {
     await Promise.all(threads)
   }
 }
-exports.PoliteCrawler = PoliteCrawler
+module.exports = { PoliteCrawler }

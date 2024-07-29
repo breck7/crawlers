@@ -1,4 +1,4 @@
-const PoliteCrawler = require("../PoliteCrawler.js")
+const { PoliteCrawler } = require("../PoliteCrawler.js")
 const { Utils } = require("jtree/products/Utils.js")
 const { TreeNode } = require("jtree/products/TreeNode.js")
 const superagent = require("superagent")
@@ -32,9 +32,9 @@ Disk.mkdir(reposDir)
 Disk.mkdir(firstCommitCache)
 Disk.mkdir(repoCountCache)
 class ConceptFileWithGitHub {
-  constructor(file, crawler) {
+  constructor(file, scrollset) {
     this.file = file
-    this.crawler = crawler
+    this.scrollset = scrollset
   }
   get id() {
     return this.file.id
@@ -86,7 +86,7 @@ class ConceptFileWithGitHub {
     file.prettifyAndSave()
   }
   get tree() {
-    return this.crawler.getTree(this.file)
+    return this.scrollset.getTree(this.file)
   }
   get githubNode() {
     return this.tree.getNode("githubRepo")
@@ -132,7 +132,7 @@ class ConceptFileWithGitHub {
     const obj = Disk.readJson(repoFilePath)
     if (typeof obj === "string") throw new Error("string:" + obj)
     if (!file.website && obj.homepage) {
-      this.crawler.setAndSave(this.file, `website`, obj.homepage)
+      this.scrollset.setAndSave(this.file, `website`, obj.homepage)
     }
     tree.getNode("githubRepo").setProperties({
       stars: obj.stargazers_count.toString(),
@@ -147,7 +147,7 @@ class ConceptFileWithGitHub {
       // githubLanguage: obj.language,
       // githubHasWiki: obj.hasWiki,
     })
-    this.crawler.save(file, tree)
+    this.scrollset.save(file, tree)
     return this
   }
   async fetchFirstCommit() {
@@ -181,7 +181,7 @@ class ConceptFileWithGitHub {
     try {
       const { firstCommit } = this
       const year = dayjs(firstCommit.commit.author.date).format("YYYY")
-      this.crawler.setAndSave(this.file, `githubRepo firstCommit`, year)
+      this.scrollset.setAndSave(this.file, `githubRepo firstCommit`, year)
     } catch (err) {
       console.error(`Failed on ${file.filename}`, err)
     }
