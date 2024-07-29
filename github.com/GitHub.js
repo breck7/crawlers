@@ -147,7 +147,7 @@ class ConceptFileWithGitHub {
       // githubLanguage: obj.language,
       // githubHasWiki: obj.hasWiki,
     })
-    this.scrollset.save(file, tree)
+    this.scrollset.formatAndSave(file, tree)
     return this
   }
   async fetchFirstCommit() {
@@ -183,7 +183,7 @@ class ConceptFileWithGitHub {
       const year = dayjs(firstCommit.commit.author.date).format("YYYY")
       this.scrollset.setAndSave(this.file, `githubRepo firstCommit`, year)
     } catch (err) {
-      console.error(`Failed on ${file.filename}`, err)
+      console.error(`Failed on ${file.id}`, err)
     }
     return this
   }
@@ -259,10 +259,10 @@ class GitHubImporter {
   writeAllRepoDataCommand() {
     this.linkedFiles.forEach(file => {
       new ConceptFileWithGitHub(file, this.scrollset)
-        .writeFirstCommitToDatabase()
+        //.writeFirstCommitToDatabase()
         .writeRepoInfoToDatabase()
         .autocompleteAppeared()
-        .autocompleteCreators()
+      //.autocompleteCreators()
     })
   }
   get langs() {
@@ -361,7 +361,7 @@ class GitHubImporter {
     const gitFile = new ConceptFileWithGitHub(file, this.scrollset)
     await gitFile.fetch()
     gitFile
-      .writeFirstCommitToDatabase()
+      //.writeFirstCommitToDatabase()
       .writeRepoInfoToDatabase()
       .autocompleteAppeared()
   }
