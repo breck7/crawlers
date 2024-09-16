@@ -86,13 +86,13 @@ class ConceptFileWithGitHub {
     file.prettifyAndSave()
   }
   get tree() {
-    return this.scrollset.getTree(this.file)
+    return this.scrollset.getParticle(this.file)
   }
   get githubNode() {
-    return this.tree.getNode("githubRepo")
+    return this.tree.getParticle("githubRepo")
   }
   get languageNode() {
-    return this.tree.getNode("githubLanguage")
+    return this.tree.getParticle("githubLanguage")
   }
   get githubRepo() {
     return this.file.githubRepo.replace("https://github.com/", "")
@@ -134,7 +134,7 @@ class ConceptFileWithGitHub {
     if (!file.website && obj.homepage) {
       this.scrollset.setAndSave(this.file, `website`, obj.homepage)
     }
-    tree.getNode("githubRepo").setProperties({
+    tree.getParticle("githubRepo").setProperties({
       stars: obj.stargazers_count.toString(),
       forks: obj.forks.toString(),
       subscribers: obj.subscribers_count.toString(),
@@ -227,7 +227,7 @@ class GitHubImporter {
     crawler.maxConcurrent = 2
     await crawler.fetchAll(
       this.linkedFiles
-        .filter(file => !file.githubRepo_stars)
+        //.filter(file => !file.githubRepo_stars)
         .map(file => new ConceptFileWithGitHub(file, this.scrollset))
     )
   }
